@@ -8,3 +8,10 @@ of heterogeneous and changing sensor constellations; properties of BSNs that bec
 more and more apparent. Information from sensors are collected and made available 
 for various applications consistently.
 
+
+
+License
+===========
+
+Copyright (C) 2013-2014  GNU General Public License version 3. See the LICENSE file for license rights and limitations.
+
