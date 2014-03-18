@@ -1,0 +1,120 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.tudarmstadt.dvs.myhealthassistant.myhealthhub"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--     <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.MApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:persistent="true"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments"
+            android:label="myHealthAssistant" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+<!--          <activity -->
+<!--             android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubGlassMainActivity" -->
+<!--             android:label="myHealthGlass" > -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.intent.action.MAIN" /> -->
+
+<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--             </intent-filter> -->
+<!--         </activity> -->
+        <activity
+            android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity"
+            android:label="@string/app_name"
+            android:launchMode="standard" >
+        </activity>
+              
+        <activity android:name=".activities.SensorConfigurationActivity" />
+        <activity android:name=".activities.EventGeneratorActivity" />
+        <activity android:name=".activities.SimpleEventsActivity" />
+        <activity android:name=".activities.JennyEventsActivity" />
+        <activity android:name=".activities.EditPreferences" />
+        <activity android:name=".activities.ManageXMLFiles" />
+        <activity android:name=".activities.DeviceListActivity" />
+        <activity android:name=".activities.PersonalActivity" />
+        <activity android:name=".activities.SensorSettingsActivity" />
+
+        <!-- Remote Service that allows other applications to start myHealthHub -->
+        <service
+            android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubRemoteService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.IMyHealthHubRemoteService" />
+            </intent-filter>
+        </service>
+
+        <!-- Services -->
+        <service android:name=".services.messagehandler.MessageHandler" />
+        <service android:name=".services.SensorModuleManager" />
+        <service android:name=".services.MessageHandlerWithOpenChannels" />
+        <service android:name=".services.transformationmanager.TransformationManager" />
+        <service android:name=".services.transformationmanager.services.WebRequestService" />
+        <service android:name=".services.transformationmanager.services.FelixService" />
+        <service
+            android:name=".services.SystemMonitor"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.IMyHealthHubRemoteService" />
+            </intent-filter>
+        </service>
+
+<!--         <receiver -->
+<!--             android:name=".services.WakeupAlarm" -->
+<!--             android:exported="true" -->
+<!--             android:process=":remote" > -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ALARM" > -->
+<!--                 </action> -->
+<!--                 <action android:name="android.intent.action.BOOT_COMPLETED" > -->
+<!--                 </action> -->
+<!--             </intent-filter> -->
+<!--         </receiver> -->
+    </application>
+
+</manifest>

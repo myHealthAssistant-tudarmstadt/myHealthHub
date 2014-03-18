@@ -1,0 +1,44 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+ 
+<resources>
+
+    <string-array name="announcement_array">
+        <item>0|ADVERTISMENT_NEW_EVENT_TYPE_AVAILABLE</item>
+        <item>1|UNADVERTISMENT_EVENT_TYPE_NOT_LONGER_AVAILABLE</item>
+        <item>2|SUBSCRIPTION_SUCCESSFULL</item>
+        <item>3|SUBSCRIPTION_UNSUCCESSFULL_INVALID_EVENT_TYPE</item>
+        <item>4|SUBSCRIPTION_UNSUCCESSFULL_NO_PERMISSION</item>
+        <item>5|MANAGEMENTEVENT_UNSUCCESSFULL_APPLICATION_NOT_INSTALLED</item>
+        <item>6|EVENT_TYPE_DOES_NOT_MATCH_NAME_CONVENTION</item>
+        <item>7|SECURITY_PERMISSION_REMOVED</item>
+        <item>8|ADVERTSIMENT_UNSUCESSFULL_PRODUCER_ALREADY_IN_LIST</item>
+        <item>9|ADVERTISMENT_SUCCESSFULL</item>
+        <item>10|INVALID_EVENT_TYPE_ARGUMENTS</item>
+        <item>11|GET_ALL_AVAILABLE_EVENT_TYPES</item>
+        <item>12|ALL_AVAILABLE_EVENT_TYPES</item>
+        <item>13|UNADVERTISMENT_SUCCESSFULL</item>
+        <item>14|SUBSCRIPTOPN_SUBSCRIBER_ALREADY_IN_LIST</item>
+        <item>15|SENSOR_CONNECTED</item>
+        <item>16|SENSOR_DISCONNECTED</item>
+        <item>17|SENSOR_CONNECTING</item>
+        <item>99|DATABASE_SHOW_WITH_ALL_SUBSCRIPTIONS_AND_UNSUBSCRIPTIONS</item>
+        <item>100|DATABASE_CLEAR_ALL</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,197 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EventGeneratorActivity" >
+
+    <CheckBox
+        android:id="@+id/cbManual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manual configuration" 
+        android:enabled="false"/>
+
+  <TableLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" >
+
+      <TableRow
+          android:id="@+id/tableRow1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+
+          <TextView
+              android:id="@+id/textView1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Enable"
+              android:textAppearance="?android:attr/textAppearanceMedium" />
+
+          <TextView
+              android:id="@+id/textView2"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Msg/s"
+              android:textAppearance="?android:attr/textAppearanceMedium" />
+
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRow2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+      <CheckBox
+          android:id="@+id/cbHR"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Heart Rate Events" />
+      <EditText
+          android:id="@+id/etHR"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:inputType="number"
+          android:text="1" />
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRow3"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >          
+      <CheckBox
+          android:id="@+id/cbBP"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Blood Pressure Events" />
+      <EditText
+          android:id="@+id/etBP"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:inputType="number"
+          android:text="1" />   
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRow4"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+      <CheckBox
+          android:id="@+id/cbWeight"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Weight Events" />
+      <EditText
+          android:id="@+id/etWeight"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:inputType="number"
+          android:text="1" />          
+      </TableRow>
+      
+      <TableRow
+          android:id="@+id/tableRow5"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+      <CheckBox
+          android:id="@+id/cbAcc"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Leg Acceleration Events" />
+      <EditText
+          android:id="@+id/etAcc"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:inputType="number"
+          android:text="1" />          
+      </TableRow>
+      
+            <TableRow
+          android:id="@+id/tableRow5"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+      <TextView
+              android:id="@+id/textView1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Duration in seconds"
+              android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+      </TableRow>
+      
+                        <TableRow
+          android:id="@+id/tableRow5"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" >
+
+                            <EditText
+                                android:id="@+id/etSimulationTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:text="30" >
+
+                                <requestFocus />
+                            </EditText>
+
+                            <Button
+                                android:id="@+id/buttonStart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="  Start  " />
+        
+      </TableRow>
+  </TableLayout>
+
+<!--   <LinearLayout android:orientation="horizontal" -->
+<!--           android:layout_width="wrap_content" -->
+<!--     android:layout_height="wrap_content"> -->
+<!--       <Button -->
+<!--       		android:id="@+id/buttonStartReceivers" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:onClick="onClickStartReceivers" -->
+<!--             android:text="  Start with Receivers " /> -->
+  
+<!--       <Button -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:onClick="onClickAdvertise" -->
+<!--             android:text="Advertise" /> -->
+  
+<!--           <Button -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:onClick="onClickUnAdvertise" -->
+<!--             android:text="UnAdvertise" /> -->
+<!--          </LinearLayout> -->
+          
+          <TextView
+      android:id="@+id/tvRound"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:text="Round 0"
+      android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</LinearLayout>

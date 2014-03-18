@@ -1,0 +1,48 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+ 
+
+<!-- Do not translate -->
+
+<resources>
+
+    <string name="settings_sensor_root_key">settingsSensorRoot</string>
+    <string name="bluetooth_sensor_key">bluetoothSensor</string>
+    <string name="settings_sensor_bluetooth_pairing_key">settingsSensorBluetoothPairing</string>
+    <string name="settings_sensor_bluetooth_discoverable_key">settingsSensorBluetoothDiscoverable</string>
+    <string name="settings_sensor_start_discovery">settingsSensorDiscovery</string>
+    <string name="settings_sensor_start_listening">settingsSensorListen</string>
+    <string name="settings_bluetooth_sensor_list">settingsBluetoothSensorList</string>
+    <string name="settings_sensor_status">settingsSensorStatus</string>
+    
+	<!--     sensor type -->
+	<string name="pulse">Pulse</string>
+    <string name="ecg">ECG</string>
+    <string name="scale">Scale</string>
+    <string name="blood_pressure">Blood Pressure</string>
+    <string name="acc_leg">Acc Leg</string>
+    <string name="acc_chest">Acc Chest</string>
+    <string name="acc_wrist">Acc Wrist</string>
+    <string name="ambient_roving">Ambient Roving</string>
+    <string name="ambient_infra">Ambient InfraWot</string>
+    <string name="acc_debug">Acc Debug</string>
+
+    <!-- specific sensor name key -->
+    <string name="key_polar">Polar Bluetooth Heart Rate</string>
+    <string name="key_debug">Bluetooth Debug Sensor</string>
+</resources>

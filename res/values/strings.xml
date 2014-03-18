@@ -1,0 +1,87 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+ 
+<resources>
+
+    <string name="app_name">myHealthHub</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_section_status">Status</string>
+    <string name="title_section_event_generator">Event Generator</string>
+    <string name="title_section_traffic_generator">Traffic Generator</string>
+    <string name="title_section_sensor_config">Sensor Configuration</string>
+    <string name="sensor_type">Sensor Type</string>
+    <string name="sensor_auto_connect">Enable</string>
+    <string name="activate">Connect to</string>
+    <string name="select_device">Select a device</string>
+    <string name="sensor_name_zephyrhxm">HR: Zephyr HxM</string>
+    <string name="sensor_name_polarbleutooth">HR: Polar Bluetooth</string>
+    <string name="sensor_name_corscience_ecg">ECG: Corscience 1-lead</string>
+    <string name="sensor_name_iem_scale">Scale: IEM</string>
+    <string name="sensor_name_boso_bloodpressure">BP: Boso medicus</string>
+    <string name="sensor_name_acc_leg">Acc: HedgeHog Ankle/Leg</string>
+    <string name="sensor_name_acc_chest">Acc: Porcupine Chest</string>
+    <string name="sensor_name_acc_wrist">Acc: HedgeHog Wrist</string>
+    <string name="sensor_name_acc_debug">Acc: Hedgehog Debug</string>
+    <string name="request_connect">Connect..</string>
+    <string name="manual_connect">Passive Connection</string>
+    <string name="auto_connect">Active Connection</string>
+    <string name="dummy_empty">Keine</string>
+    <string name="sensor_name_roving">Ambient: Roving Modules</string>
+    <string name="sensor_name_infrawot">Ambient: InfraWoT</string>
+    <string name="men_manage_db">Manage Database</string>
+    <string name="men_manage_xml">Manage XMLs</string>
+    <string name="men_transformation_manager">Transformation Manager</string>
+    <string name="men_show_eventgen">Show Event Generator</string>
+    <string name="men_preferences">Preferences</string>
+
+    <!-- Personal Profile -->
+    <string name="psnal_input">Personal Data</string>
+    <string name="p_user_name">Username</string>
+    <string name="p_weight">Current Weight</string>
+    <string name="p_cri_hr">Critical Heart Rate</string>
+    <string name="p_gender">Gender</string>
+    <string name="p_age">Age</string>
+    <string name="p_emcy_phone_nr">Emergency PhoneNr</string>
+    <string name="p_height">Body Height</string>
+    <string name="p_height_type">cm</string>
+    <string name="p_empty">Not avail</string>
+    <string name="p_weight_type">kg</string>
+    <string name="p_cri_hr_type">bpm</string>
+
+    <!-- Server URL -->
+    <string name="send_url">http://benuha.hostoi.com/android_myhealthhub/send_message.php</string>
+
+    <!-- Popup screen -->
+    <string name="popup_sys_monitor">
+        myHealthAssistant regelmäßig (alle 15 Minuten?) nach dem Batteriestatus
+        und der aktuellen (GPS) Position schaut und das an einen Server weiterleitet. 
+        Falls das System also keine Energie mehr hat und es sein kann, dass der Patient
+        in einer kritischen Situation ist, kann man die letzte Position nachschauen.
+        </string>
+        
+<!--     Sensor Settings -->
+	<string name="value_unknown">Unknown</string>
+	<string name="title_bluetooth_sensor_type">Sensor Type</string>
+	<string name="title_bluetooth_pairing">Bluetooth pairing</string>
+	<string name="sum_bluetooth_pairing">Open Android\'s Bluetooth settings to pair a new sensor</string>
+	<string name="title_sensor_status">Sensor Status</string>
+	<string name="title_bluetooth_sensor_list">Bluetooth-Sensor</string>
+	<string name="sum_bluetooth_sensor_list">List of available BT-Sensor</string>
+	
+
+</resources>

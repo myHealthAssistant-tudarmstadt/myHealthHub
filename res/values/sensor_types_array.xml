@@ -1,0 +1,76 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+ 
+<resources>    
+    <string-array name="sensor_type_config">
+        <item>@string/pulse</item>
+        <item>@string/ecg</item>
+        <item>@string/scale</item>
+        <item>@string/blood_pressure</item>
+        <item>@string/acc_leg</item>
+        <item>@string/acc_chest</item>
+        <item>@string/acc_wrist</item>
+        <item>@string/ambient_roving</item>
+        <item>@string/ambient_infra</item>
+        <item>@string/acc_debug</item>
+    </string-array>
+    
+    <!-- ======================================================= -->
+    <string-array name="type_pulse">
+        <item>@string/key_polar</item>
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_ecg">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_cale">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_bp">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_acc_leg">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_acc_chest">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_acc_wrist">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_ambient_roving">
+        <item>Roving Modules</item>
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_ambient_infra">
+        <item>@string/dummy_empty</item>
+    </string-array>
+    
+    <string-array name="type_acc_debug">
+        <item>@string/key_debug</item>
+        <item>@string/dummy_empty</item>
+    </string-array>
+</resources>

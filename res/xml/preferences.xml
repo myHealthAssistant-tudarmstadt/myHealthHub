@@ -1,0 +1,146 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Auto-Connection" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="autoConnectEnabled"
+            android:summary="Enables auto-connection for selected sensors."
+            android:title="General Auto-Connect" />
+
+        <PreferenceScreen
+            android:summary="Select sensor modules that are started with myHealthHub Service."
+            android:title="Sensor Selection" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/pulse"
+                android:title="@string/pulse" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/ecg"
+                android:title="@string/ecg" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/scale"
+                android:title="@string/scale" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/blood_pressure"
+                android:title="@string/blood_pressure" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/acc_leg"
+                android:title="@string/acc_leg" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/acc_chest"
+                android:title="@string/acc_chest" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/acc_wrist"
+                android:title="@string/acc_wrist" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/ambient_roving"
+                android:title="@string/ambient_roving" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/ambient_infra"
+                android:title="@string/ambient_infra" />
+        </PreferenceScreen>
+        <Preference 
+            android:title="@string/title_bluetooth_pairing"
+            android:key="@string/settings_sensor_bluetooth_pairing_key"
+            android:summary="@string/sum_bluetooth_pairing"/>
+        <PreferenceScreen
+            android:summary="Time settings for auto-connect attempts."
+            android:title="Time Preferences" >
+            <EditTextPreference
+                android:defaultValue="2000"
+                android:key="autoConnectWarmUp"
+                android:summary="Time until the system triggers the first connection attempt."
+                android:title="Warm-up Time (in ms)" />
+            <EditTextPreference
+                android:defaultValue="3000"
+                android:key="autoConnectTimeUntilNextDevice"
+                android:summary="Time between two attempts."
+                android:title="Time inbetween Attempts (in ms)" />
+            <EditTextPreference
+                android:defaultValue="5000"
+                android:key="autoConnectTimeUntilNextCheck"
+                android:summary="Time until the next series of attempts is started."
+                android:title="Time until next Check (in ms)" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Notifications" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="SystemMonitorPref"
+            android:summary="Start, stop System Monitoring Activity"
+            android:title="System Monitoring" />
+
+        <EditTextPreference
+            android:defaultValue="cseeger@dvs.tu-darmstadt.de"
+            android:key="notificationEmail"
+            android:summary="Email address for receiving notifications such as alarms."
+            android:title="Notification Email Address" />
+
+        <PreferenceScreen
+            android:summary="Select which information types shall be forwarded."
+            android:title="Configure EMail Notification" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="emailNotificationAlarms"
+                android:title="Alarms" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="emailNotificationInformation"
+                android:title="Information" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Configure URL and Port for remote repository serving event transformations."
+        android:title="TM: Remote Repository" >
+        <EditTextPreference
+            android:defaultValue="192.168.1.7"
+            android:key="tmRemoteRepositoryHost"
+            android:summary="IP address of the remote repository."
+            android:title="IP Address" />
+        <EditTextPreference
+            android:defaultValue="8080"
+            android:key="tmRemoteRepositoryPort"
+            android:summary="Port of the remote repository."
+            android:title="Port" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Please use the Manage XMLs activity in order to set the XML files."
+        android:title="XML Configuration Files" >
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="xmlFileMACSensor"
+            android:summary="XML file that maps the sensor&apos;s MAC address to its logical sensor type."
+            android:title="MAC-Sensor-Mapping" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="xmlFileEnvrSensingRules"
+            android:summary="XML file that defines the environmental sensing rules."
+            android:title="Environmental Sensing Rules" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,41 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+ 
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/men_preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/men_preferences">
+    </item>
+    <item
+        android:id="@+id/men_transformation_manager"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:title="@string/men_transformation_manager">
+    </item>
+    <item
+        android:id="@+id/men_pers"
+        android:icon="@android:drawable/dark_header"
+        android:title="Personalization">
+    </item>
+    <item
+        android:id="@+id/men_manage_xml"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:title="@string/men_manage_xml">
+    </item>
+</menu>
