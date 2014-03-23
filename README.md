@@ -15,7 +15,7 @@ Build and Run
 The following software is required to build the application:
 - Java JDK SE 1.6
 - Android SDK + Eclipse or Android Developer Tools Bundle (ADT) 
-- Android 4.03(Sdk min version API15) to Android 4.2.2(Sdk version API17)
+- Android 4.03(Sdk version API15) to Android 4.2.2(Sdk version API17) from Android SDK Manager to be installed
 	
 Run in Eclipse:
 - In Eclipse, go File-> Import-> Android-> Exiting Android Code into Workspace-> Next
