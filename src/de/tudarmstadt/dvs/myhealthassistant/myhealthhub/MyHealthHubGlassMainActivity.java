@@ -42,6 +42,11 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Design to fit on Google Glass GUI
+ * @author HieuHa
+ *
+ */
 public class MyHealthHubGlassMainActivity extends FragmentActivity {
 	// for debugging
 	private static final String TAG = MyHealthHubGlassMainActivity.class
@@ -51,8 +56,6 @@ public class MyHealthHubGlassMainActivity extends FragmentActivity {
 	/** Flag indicating whether we have called bind on the service. */
 	boolean mBound;
 
-	// private ArrayAdapter<String> mAdapter;
-	// private Map<String, String[]> mSensorType;
 	private ViewHolder viewHolder;
 	private SharedPreferences pref;
 
@@ -68,16 +71,6 @@ public class MyHealthHubGlassMainActivity extends FragmentActivity {
 		if (D)
 			Log.d(TAG, "onCreate");
 		setContentView(R.layout.glass_sensor_type_config);
-
-		// mSensorType = new HashMap<String, String[]>();
-		// mSensorType.put(getResources().getString(R.string.pulse),
-		// getResources().getStringArray(R.array.type_pulse));
-		// mSensorType.put(getResources().getString(R.string.acc_chest),
-		// getResources().getStringArray(R.array.type_acc_chest));
-		// mSensorType.put(getResources().getString(R.string.acc_leg),
-		// getResources().getStringArray(R.array.type_acc_leg));
-		// mSensorType.put(getResources().getString(R.string.acc_wrist),
-		// getResources().getStringArray(R.array.type_acc_wrist));
 
 		pref = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());

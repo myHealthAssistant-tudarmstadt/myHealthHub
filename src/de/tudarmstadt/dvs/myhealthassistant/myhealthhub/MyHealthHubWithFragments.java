@@ -38,6 +38,7 @@ import android.widget.TextView;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.EditPreferences;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.ManageXMLFiles;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.PersonalActivity;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.EventGeneratorFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigurationListFragment;
@@ -217,7 +218,11 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 			startActivityForResult(xmlIntent, MANAGE_XML_FILES);
 			return true;
 
-			// TODO Monitoring Performance
+			// Manage Event Transformation 
+		case R.id.men_transformation_manager:
+    		Intent tm = new Intent(getApplicationContext(), TransformationManagerActivity.class);
+    		startActivity(tm);
+    		return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
