@@ -25,7 +25,8 @@ Run in Eclipse:
 
 Usage
 ==============
-Using myHealthHub is straight forward. Suppose you have a sensor (a Polar Heart rate sensor since other sensor decoder aren't included in myHealthHub due to license aggrement), first you need to pair it with Android:
+Using myHealthHub is straight forward. Suppose you have a sensor (a Polar Heart rate sensor since other sensor decoder aren't included in myHealthHub due to license aggrement).
+First you need to pair it with Android:
 - Wet your Polar Heart Rate Monitor to increase conductivity and put it on
 - Go to Android Settings - Tap Wireless & Network
 - Open Bluetooth Settings
@@ -37,7 +38,7 @@ To start Open myHealthHub:
 - Tap on Pulse Sensor type to open its Settings
 - Tap Sensor Type to choose device's type as Polar Bluetooth Heart Rate for raw data decoding
 - Tap Bluetooth Device to choose Mac Address of pairing sensor above
-- Back to main menu, now you can enable or disable Polar Sensor, which will allow myHealthHub to advertise/unadvertise Heart Rate data and other Applications to subscribe to it
+- Back to main menu, now you can enable or disable Polar Sensor, which will allow myHealthHub to advertise/unadvertise Heart Rate data and other Applications can receive the data when they subscribe to myHealthHub.
 
 License
 ==============
