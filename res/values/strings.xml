@@ -80,7 +80,7 @@
 	<string name="title_bluetooth_pairing">Bluetooth pairing</string>
 	<string name="sum_bluetooth_pairing">Open Android\'s Bluetooth settings to pair a new sensor</string>
 	<string name="title_sensor_status">Sensor Status</string>
-	<string name="title_bluetooth_sensor_list">Bluetooth-Sensor</string>
+	<string name="title_bluetooth_sensor_list">Bluetooth-Device</string>
 	<string name="sum_bluetooth_sensor_list">List of available BT-Sensor</string>
 	
 

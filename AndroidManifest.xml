@@ -47,7 +47,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments"
-            android:label="myHealthAssistant" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
