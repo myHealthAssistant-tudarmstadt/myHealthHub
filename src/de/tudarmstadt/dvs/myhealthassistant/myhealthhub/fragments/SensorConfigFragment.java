@@ -46,8 +46,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 /**
- * 
  * @author HieuHa
+ * This class shows all external sensors that can be accessed by BluetoothAdapter
  * 
  */
 public class SensorConfigFragment extends ListFragment {
@@ -138,12 +138,12 @@ public class SensorConfigFragment extends ListFragment {
 	}
 
 	private void startSensorModule() {
-		progressDialog = new ProgressDialog(getActivity());
-		progressDialog.setTitle("");
-		progressDialog.setMessage("Loading...");
-		progressDialog.setCancelable(false);
-		progressDialog.setIndeterminate(true);
-		progressDialog.show();
+//		progressDialog = new ProgressDialog(getActivity());
+//		progressDialog.setTitle("");
+//		progressDialog.setMessage("Loading...");
+//		progressDialog.setCancelable(false);
+//		progressDialog.setIndeterminate(true);
+//		progressDialog.show();
 
 		/* Preferences */
 		preferences = PreferenceManager.getDefaultSharedPreferences(this

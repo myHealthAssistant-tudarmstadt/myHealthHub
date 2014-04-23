@@ -40,6 +40,8 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.ManageXMLFile
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.PersonalActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.EventGeneratorFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.InternalSensorListFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigurationListFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SimpleEventsFragment;
@@ -116,11 +118,13 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 				return fragment;
 
 			case 1:
-				fragment = new SimpleEventsFragment();
+				fragment = new InternalSensorListFragment();
+//				fragment = new SimpleEventsFragment();
 				return fragment;
 
 			case 2:
-				fragment = new EventGeneratorFragment();
+				fragment = new GraphFragment();
+//				fragment = new EventGeneratorFragment();
 				return fragment;
 
 			default:
@@ -148,7 +152,7 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 				return getString(R.string.title_section_sensor_config)
 						.toUpperCase(l);
 			case 1:
-				return getString(R.string.title_section_event_generator)
+				return getString(R.string.title_section_internal_sensor)
 						.toUpperCase(l);
 			case 2:
 				return getString(R.string.title_section_traffic_generator)

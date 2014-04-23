@@ -38,7 +38,6 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.commontools.EventUtils;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.commontools.mail.GMailSender;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.AbstractChannel;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.localmanagement.EventTransformationRequest;
@@ -121,12 +120,12 @@ public class MessageHandler extends Service {
 			Thread thread = new Thread() {
 				public void run() {
 					try {
-						GMailSender sender = new GMailSender(
-								null,
-								null);
-						sender.sendMail(subject, body,
-								null,
-								null);
+//						GMailSender sender = new GMailSender(
+//								null,
+//								null);
+//						sender.sendMail(subject, body,
+//								null,
+//								null);
 					} catch (Exception e) {
 						Log.e("SendMail", e.getMessage(), e);
 					}

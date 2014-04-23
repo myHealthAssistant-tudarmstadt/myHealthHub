@@ -20,6 +20,7 @@
 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -38,6 +39,12 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author HieuHa
+ *
+ * Open a windows to point to each type of sensor with its mac address 
+ */
 public class SensorSettingsActivity extends FragmentActivity {
 	private static String TAG = SensorSettingsActivity.class.getName();
 	private ViewHolder viewHolder;
@@ -182,6 +189,7 @@ public class SensorSettingsActivity extends FragmentActivity {
 	 * Dialog to display a list of bonded Bluetooth devices for user to select
 	 * from. This is needed only for connection initiated from the application.
 	 */
+	@SuppressLint("ValidFragment")
 	public class SelectDeviceDialogFragment extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {

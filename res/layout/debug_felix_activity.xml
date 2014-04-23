@@ -26,8 +26,7 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Felix" 
-        android:onClick="onClickStartFelix"/>
+        android:text="Start Felix" />
 
     <Button
         android:id="@+id/button2"
@@ -39,7 +38,7 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Transformation"
-        android:onClick="onClickStartTransformation" />
+        android:text="Start Transformation" />
 
+<!--         android:onClick="onClickStartTransformation" -->
 </LinearLayout>

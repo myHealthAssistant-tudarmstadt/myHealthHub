@@ -22,8 +22,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_section_status">Status</string>
     <string name="title_section_event_generator">Event Generator</string>
-    <string name="title_section_traffic_generator">Traffic Generator</string>
+    <string name="title_section_traffic_generator">Traffic Monitor</string>
     <string name="title_section_sensor_config">Sensor Configuration</string>
+    <string name="title_section_internal_sensor">Internal Sensor Config</string>
     <string name="sensor_type">Sensor Type</string>
     <string name="sensor_auto_connect">Enable</string>
     <string name="activate">Connect to</string>

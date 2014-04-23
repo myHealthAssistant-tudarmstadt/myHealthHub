@@ -21,6 +21,7 @@
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.SensorModuleManager;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.messagehandler.MessageHandler;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -269,6 +270,7 @@ public class MyHealthHubGlassMainActivity extends FragmentActivity {
 	 * Dialog to display a list of bonded Bluetooth devices for user to select
 	 * from. This is needed only for connection initiated from the application.
 	 */
+	@SuppressLint("ValidFragment")
 	public class SelectDeviceDialogFragment extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {

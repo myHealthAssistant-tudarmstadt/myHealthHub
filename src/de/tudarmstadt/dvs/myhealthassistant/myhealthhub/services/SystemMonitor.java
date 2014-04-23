@@ -36,7 +36,6 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.IMyHealthHubRemoteServic
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.commontools.JSONParser;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.commontools.mail.GMailSender;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -216,17 +215,17 @@ public class SystemMonitor extends Service {
 			@Override
 			protected Void doInBackground(String... params) {
 				String message = params[0];
-				GMailSender sender = new GMailSender(
-						null,
-						null);
-				try {
-					sender.sendMail("myHealthAssistant: SystemMonitor",
-							message,
-							null,
-							null);
-				} catch (Exception e) {
-					Log.e(SystemMonitor.class.getSimpleName(), e.getMessage());
-				}
+//				GMailSender sender = new GMailSender(
+//						null,
+//						null);
+//				try {
+//					sender.sendMail("myHealthAssistant: SystemMonitor",
+//							message,
+//							null,
+//							null);
+//				} catch (Exception e) {
+//					Log.e(SystemMonitor.class.getSimpleName(), e.getMessage());
+//				}
 				return null;
 			}
 

@@ -68,7 +68,6 @@
             android:launchMode="standard" >
         </activity>
               
-        <activity android:name=".activities.SensorConfigurationActivity" />
         <activity android:name=".activities.EventGeneratorActivity" />
         <activity android:name=".activities.SimpleEventsActivity" />
         <activity android:name=".activities.JennyEventsActivity" />
@@ -77,6 +76,7 @@
         <activity android:name=".activities.DeviceListActivity" />
         <activity android:name=".activities.PersonalActivity" />
         <activity android:name=".activities.SensorSettingsActivity" />
+<!--         <activity android:name=".activities.InternalSensorActivity"/> -->
 
         <!-- Remote Service that allows other applications to start myHealthHub -->
         <service
