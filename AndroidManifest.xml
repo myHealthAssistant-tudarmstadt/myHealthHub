@@ -13,8 +13,8 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.tudarmstadt.dvs.myhealthassistant.myhealthhub"
@@ -35,7 +35,7 @@
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<!--     <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
+    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -50,24 +50,25 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--          <activity -->
-<!--             android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubGlassMainActivity" -->
-<!--             android:label="myHealthGlass" > -->
-<!--             <intent-filter> -->
-<!--                 <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <activity -->
+        <!-- android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubGlassMainActivity" -->
+        <!-- android:label="myHealthGlass" > -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
-<!--         </activity> -->
+
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
         <activity
             android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity"
             android:label="@string/app_name"
             android:launchMode="standard" >
         </activity>
-              
         <activity android:name=".activities.EventGeneratorActivity" />
         <activity android:name=".activities.SimpleEventsActivity" />
         <activity android:name=".activities.JennyEventsActivity" />
@@ -76,7 +77,8 @@
         <activity android:name=".activities.DeviceListActivity" />
         <activity android:name=".activities.PersonalActivity" />
         <activity android:name=".activities.SensorSettingsActivity" />
-<!--         <activity android:name=".activities.InternalSensorActivity"/> -->
+        <!-- <activity android:name=".activities.InternalSensorActivity"/> -->
+
 
         <!-- Remote Service that allows other applications to start myHealthHub -->
         <service
@@ -95,6 +97,13 @@
         <service android:name=".services.transformationmanager.services.WebRequestService" />
         <service android:name=".services.transformationmanager.services.FelixService" />
         <service
+            android:name=".services.InternalSensorService"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS" />
+            </intent-filter>
+        </service>
+        <service
             android:name=".services.SystemMonitor"
             android:enabled="true"
             android:exported="true"
@@ -104,17 +113,17 @@
             </intent-filter>
         </service>
 
-<!--         <receiver -->
-<!--             android:name=".services.WakeupAlarm" -->
-<!--             android:exported="true" -->
-<!--             android:process=":remote" > -->
-<!--             <intent-filter> -->
-<!--                 <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ALARM" > -->
-<!--                 </action> -->
-<!--                 <action android:name="android.intent.action.BOOT_COMPLETED" > -->
-<!--                 </action> -->
-<!--             </intent-filter> -->
-<!--         </receiver> -->
+        <!-- <receiver -->
+        <!-- android:name=".services.WakeupAlarm" -->
+        <!-- android:exported="true" -->
+        <!-- android:process=":remote" > -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ALARM" > -->
+        <!-- </action> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" > -->
+        <!-- </action> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
     </application>
 
 </manifest>

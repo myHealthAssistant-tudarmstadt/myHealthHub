@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
- /**
+ */
+
+/**
  * 
  */
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
@@ -60,11 +60,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Idee ist, dass myHealthAssistant regelmäßig (alle 15 Minuten?) nach dem
- * Batteriestatus und der aktuellen (GPS) Position schaut und das an einen
- * Server weiterleitet. Falls das System also keine Energie mehr hat und es sein
- * kann, dass der Patient in einer kritischen Situation ist, kann man die letzte
- * Position nachschauen.
+ * Idea is that myHealthHub regularly (each 15mins!?) does a battery check and
+ * the current GPS Location of the device and sends data to a Server. In case of
+ * System Failure and the patient is in a critical condition, we can use those to
+ * check for his last known location.
  * 
  * @author HieuHa
  * 
@@ -215,17 +214,17 @@ public class SystemMonitor extends Service {
 			@Override
 			protected Void doInBackground(String... params) {
 				String message = params[0];
-//				GMailSender sender = new GMailSender(
-//						null,
-//						null);
-//				try {
-//					sender.sendMail("myHealthAssistant: SystemMonitor",
-//							message,
-//							null,
-//							null);
-//				} catch (Exception e) {
-//					Log.e(SystemMonitor.class.getSimpleName(), e.getMessage());
-//				}
+				// GMailSender sender = new GMailSender(
+				// null,
+				// null);
+				// try {
+				// sender.sendMail("myHealthAssistant: SystemMonitor",
+				// message,
+				// null,
+				// null);
+				// } catch (Exception e) {
+				// Log.e(SystemMonitor.class.getSimpleName(), e.getMessage());
+				// }
 				return null;
 			}
 

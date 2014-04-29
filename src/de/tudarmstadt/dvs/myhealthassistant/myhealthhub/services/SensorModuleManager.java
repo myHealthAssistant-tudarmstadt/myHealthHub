@@ -39,6 +39,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.Preferences;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.AbstractChannel;
@@ -138,11 +139,11 @@ public class SensorModuleManager extends Service {
 
 	@Override
 	public int onStartCommand(Intent i, int flags, int startId) {
-		Log.e(TAG,
-				"call me redundant BABY!  onStartCommand service");
+//		Log.e(TAG,
+//				"call me redundant BABY!  onStartCommand service");
 		
 		
-		Intent intent = new Intent(this, SensorConfigFragment.class);
+		Intent intent = new Intent(this, MyHealthHubWithFragments.class);
 		PendingIntent pendIntent = PendingIntent
 				.getActivity(this, 0, intent, 0);
 		int myID = android.os.Process.myPid();

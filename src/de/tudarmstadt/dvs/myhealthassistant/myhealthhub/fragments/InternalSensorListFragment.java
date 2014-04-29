@@ -18,16 +18,21 @@
 
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.InternalSensorListAdapter;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,15 +44,16 @@ import android.view.ViewGroup;
  *         allows user to quickly enable/disable them.
  */
 public class InternalSensorListFragment extends ListFragment {
-	private SensorManager mSensorManager;
-
+	
 	// for debugging
 	private static final String TAG = InternalSensorListFragment.class
 			.getSimpleName();
 	private static boolean D = true;
 
 	private View rootView;
-	private List<Sensor> deviceSensors;
+	private List<Integer> SensorTypes;
+//	private Map<Integer, String> SensorTypes;
+//	private SparseArray<String> SensorTypes;
 	private InternalSensorListAdapter mAdapter;
 
 	@Override
@@ -67,12 +73,39 @@ public class InternalSensorListFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 
-		mSensorManager = (SensorManager) getActivity().getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-		deviceSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+		SensorTypes = new ArrayList<Integer>();
+		SensorTypes.add(Sensor.TYPE_ACCELEROMETER);
+		SensorTypes.add(Sensor.TYPE_LIGHT);
+		SensorTypes.add(Sensor.TYPE_AMBIENT_TEMPERATURE);
+		SensorTypes.add(Sensor.TYPE_GRAVITY);
+		SensorTypes.add(Sensor.TYPE_GYROSCOPE);
+		SensorTypes.add(Sensor.TYPE_LINEAR_ACCELERATION);
+		SensorTypes.add(Sensor.TYPE_MAGNETIC_FIELD);
+		SensorTypes.add(Sensor.TYPE_PRESSURE);
+		SensorTypes.add(Sensor.TYPE_PROXIMITY);
+		SensorTypes.add(Sensor.TYPE_RELATIVE_HUMIDITY);
+		SensorTypes.add(Sensor.TYPE_ROTATION_VECTOR);
+		
+//		SensorTypes = new SparseArray<String>();		
+//		SensorTypes = new HashMap<Integer, String>();
+//		SensorTypes.put(Sensor.TYPE_ACCELEROMETER, "Accelerometer");
+//		SensorTypes.put(Sensor.TYPE_LIGHT, "Light");
+//		SensorTypes.put(Sensor.TYPE_AMBIENT_TEMPERATURE, "Ambient Temperature");
+//		SensorTypes.put(Sensor.TYPE_GRAVITY, "Gravity");
+//		SensorTypes.put(Sensor.TYPE_GYROSCOPE, "Gyroscope");
+//		SensorTypes.put(Sensor.TYPE_LINEAR_ACCELERATION, "Linear Acceleration");
+//		SensorTypes.put(Sensor.TYPE_MAGNETIC_FIELD, "Magnetic Field");
+//		SensorTypes.put(Sensor.TYPE_PRESSURE, "Pressure");
+//		SensorTypes.put(Sensor.TYPE_PROXIMITY, "Proximity");
+//		SensorTypes.put(Sensor.TYPE_RELATIVE_HUMIDITY, "Relative Humidity");
+//		SensorTypes.put(Sensor.TYPE_ROTATION_VECTOR, "Rotation Vector");
 		
 		mAdapter = new InternalSensorListAdapter(getActivity(), getActivity().getApplicationContext());
 		setListAdapter(mAdapter);
-		mAdapter.setData(deviceSensors);
+		
+//		SensorManager mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+		
+		mAdapter.setData(SensorTypes);
 		
 		
 	}

@@ -35,6 +35,16 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 	public static final String COLUMN_REQUIRED_EVENT_TYPES = "requiredEventTypes";
 	public static final String COLUMN_TRANSFORMATION_COSTS = "transformationCosts";
 	
+	// TRAFFIC MONITORING
+	public static final String COLUMN_DATE_ID = "dateId";
+	public static final String TABLE_TRAFFIC_MON = "local_traffic_monitoring";
+	public static final String TABLE_DATE_TO_TRAFFIC = "local_date_to_traffic";
+	public static final String COLUMN_X_AXIS = "xValue";
+	public static final String COLUMN_Y_AXIS = "yValue";
+	public static final String COLUMN_DATE_TEXT = "dateValue";
+	public static final String COLUMN_TRAFFIC_ID = "trafficId";
+	public static final String COLUMN_TYPE = "trafficType";
+	
 	public static final String DATABASE_NAME = "transformations.db";
 	public static final int DATABASE_VERSION = 1;
 	
@@ -50,6 +60,20 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 			COLUMN_REQUIRED_EVENT_TYPES+	" TEXT, " +
 			COLUMN_TRANSFORMATION_COSTS+ " INTEGER);";
 
+	public static final String TRAFFIC_MON_CREATE = "CREATE TABLE "
+			+ TABLE_TRAFFIC_MON + " (" + 
+			COLUMN_ID +	" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+			COLUMN_DATE_TEXT+ " TEXT, " +
+			COLUMN_TYPE+ " TEXT, " +
+			COLUMN_X_AXIS+	" REAL, " + 
+			COLUMN_Y_AXIS+	" REAL);";
+	
+	public static final String DATE_TO_TRAFFIC = "CREATE TABLE "
+			+ TABLE_DATE_TO_TRAFFIC + " (" + 
+			COLUMN_DATE_ID +	" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+			COLUMN_TRAFFIC_ID+ " INTEGER, " +
+			COLUMN_DATE_TEXT+ " TEXT);";
+	
 	public LocalTransformationDB(Context context) {
 		super(context, DATABASE_NAME,null, DATABASE_VERSION);
 	}
@@ -58,12 +82,14 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase database) {
 		Log.i(TAG, "creating database tabelle");
 		database.execSQL(DATABASE_CREATE);
+		database.execSQL(TRAFFIC_MON_CREATE);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
 		Log.w(TAG, "Upgrading database from version "+ oldVersion+ " to "+ newVersion);
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCAL_TRANSFORMATIONS);
+		database.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAFFIC_MON);
 		onCreate(database);
 	}
 

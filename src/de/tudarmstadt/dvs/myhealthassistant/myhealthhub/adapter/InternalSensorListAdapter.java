@@ -21,13 +21,18 @@ package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter;
 import java.util.List;
 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.InternalSensorActivity;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.InternalSensorService;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
+import android.opengl.Visibility;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -43,18 +49,17 @@ import android.widget.TextView;
  * 
  *         Represent each Sensor with on/off button
  */
-public class InternalSensorListAdapter extends ArrayAdapter<Sensor> {
+public class InternalSensorListAdapter extends ArrayAdapter<Integer> {
+	private static final String TAG = InternalSensorListAdapter.class
+			.getSimpleName();
 	private LayoutInflater mInflater;
 	private static final int POS_TAG = 1 + 2 << 24;
-	private Context context;
-	private Activity activity;
+	public static final String PREF_SENSOR_TYPE = "SensorType=";
 	private SharedPreferences preferences;
 
 	public InternalSensorListAdapter(Activity activity, Context ctx) {
 		super(ctx, 0);
 		mInflater = (LayoutInflater) LayoutInflater.from(activity);
-		this.context = ctx;
-		this.activity = activity;
 		preferences = PreferenceManager.getDefaultSharedPreferences(activity);
 	}
 
@@ -75,7 +80,7 @@ public class InternalSensorListAdapter extends ArrayAdapter<Sensor> {
 			view = convertView;
 		}
 
-		final Sensor item = getItem(position);
+		final int item = getItem(position);
 
 		// Create the view holder
 		final ViewHolder viewHolder = new ViewHolder();
@@ -87,40 +92,67 @@ public class InternalSensorListAdapter extends ArrayAdapter<Sensor> {
 
 		view.setTag(POS_TAG, position);
 
-		viewHolder.mTitle.setText(item.getName());
-		viewHolder.mDevice.setText(item.getVendor());
-		viewHolder.mStatus.setText("Version:" + item.getVersion());
-		
-//		viewHolder.mSwitch.setChecked(isOn(item.getName()));
-		viewHolder.mSwitch.setChecked(false);
-		setSensor(item.getName(), item.getType(), false);
-//		view.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				boolean oldValue = viewHolder.mSwitch.isChecked();
-//				viewHolder.mSwitch.setChecked(!oldValue);
-//				setSensor(item.getName(), item.getType(), !oldValue);
-//			}
-//		});
+		viewHolder.mSwitch.setEnabled(false);
+		viewHolder.mSwitch.setVisibility(View.GONE);
+		String sensorName = "Unknown";
+		switch (item) {
+		case Sensor.TYPE_ACCELEROMETER:
+			sensorName = "Accelerometer";
+			viewHolder.mSwitch.setEnabled(true);
+			viewHolder.mSwitch.setVisibility(View.VISIBLE);
+			break;
+		case Sensor.TYPE_LIGHT:
+			sensorName = "Light";
+			viewHolder.mSwitch.setEnabled(true);
+			viewHolder.mSwitch.setVisibility(View.VISIBLE);
+			break;
+		case Sensor.TYPE_AMBIENT_TEMPERATURE:
+			sensorName = "Ambient Temperature";
+			break;
+		case Sensor.TYPE_GRAVITY:
+			sensorName = "Gravity";
+			break;
+		case Sensor.TYPE_GYROSCOPE:
+			sensorName = "Gyroscope";
+			break;
+		case Sensor.TYPE_LINEAR_ACCELERATION:
+			sensorName = "Linear Acceleration";
+			break;
+		case Sensor.TYPE_MAGNETIC_FIELD:
+			sensorName = "Magnetic Field";
+			break;
+		case Sensor.TYPE_PRESSURE:
+			sensorName = "Pressure";
+			break;
+		case Sensor.TYPE_PROXIMITY:
+			sensorName = "Proximity";
+			break;
+		case Sensor.TYPE_RELATIVE_HUMIDITY:
+			sensorName = "Relative Humidity";
+			break;
+		case Sensor.TYPE_ROTATION_VECTOR:
+			sensorName = "Rotation Vector";
+			break;
 
-		// viewHolder.mStatus.setTextColor(getContext().getResources().getColor(
-		// (android.R.color.holo_red_light)));
-		//
-		// viewHolder.mStatus.setText(item.toString());
-		viewHolder.mSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				setSensor(item.getName(), item.getType(), isChecked);
-			}
-		});
+		}
+		viewHolder.mTitle.setText(sensorName);
+		viewHolder.mDevice.setText("");
+		viewHolder.mStatus.setText("");
+
+		viewHolder.mSwitch
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						setSensor(item, isChecked);
+					}
+				});
+		viewHolder.mSwitch.setChecked(false);
 		return view;
 	}
-	
-	
 
-	public void setData(List<Sensor> data) {
+	public void setData(List<Integer> data) {
 		clear();
 		if (data != null) {
 			for (int i = 0; i < data.size(); i++) {
@@ -129,23 +161,19 @@ public class InternalSensorListAdapter extends ArrayAdapter<Sensor> {
 		}
 	}
 
-	private boolean isOn(String sensorName) {
-		return preferences.getBoolean(sensorName, false);
+	private boolean isOn(int sensorType) {
+		return preferences.getBoolean(PREF_SENSOR_TYPE + sensorType, false);
 	}
 
-	private InternalSensorActivity isa;
-
-	private boolean setSensor(String sensorName, int type, boolean on) {
-		if (on) {
-			isa = new InternalSensorActivity(type, activity);
-			isa.onStart();
-
+	private boolean setSensor(int type, boolean on) {
+		if (on){
+			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+			intent.putExtra(PREF_SENSOR_TYPE, type);
+			getContext().startService(intent);
 		} else {
-			if (isa != null) {
-				if (isa.isStated())
-					isa.onStop();
-			}
+			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+			getContext().stopService(intent);
 		}
-		return preferences.edit().putBoolean(sensorName, on).commit();
+		return preferences.edit().putBoolean(PREF_SENSOR_TYPE + type, on).commit();
 	}
 }

@@ -64,15 +64,15 @@
     <string name="p_weight_type">kg</string>
     <string name="p_cri_hr_type">bpm</string>
 
-    <!-- Server URL -->
+    <!-- Server URL can be changed if needed! -->
     <string name="send_url">http://benuha.hostoi.com/android_myhealthhub/send_message.php</string>
 
     <!-- Popup screen -->
     <string name="popup_sys_monitor">
-        myHealthAssistant regelmäßig (alle 15 Minuten?) nach dem Batteriestatus
-        und der aktuellen (GPS) Position schaut und das an einen Server weiterleitet. 
-        Falls das System also keine Energie mehr hat und es sein kann, dass der Patient
-        in einer kritischen Situation ist, kann man die letzte Position nachschauen.
+        Idea is that myHealthHub regularly (each 15mins!?) does a battery check and 
+        the current GPS Location of the device and sends data to a Server. In case of
+        System Failure and the patient is in a critical condition, we can use those to
+        check for his last known location.
         </string>
         
 <!--     Sensor Settings -->

@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
- package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database;
+ */
+
+package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,22 +47,26 @@ public class LocalTransformationDBMS {
 		dbHelper.close();
 	}
 
-	public boolean addTransformation(long bundleId, String transformationName, String producedEventType,
-			List<String> requiredEventTypes, int costs) {
+	public boolean addTransformation(long bundleId, String transformationName,
+			String producedEventType, List<String> requiredEventTypes, int costs) {
 		// generate semicolon separated list of required event types
 		String requiredEvents = "";
-		for(String type : requiredEventTypes) {
-			requiredEvents += type+";";
+		for (String type : requiredEventTypes) {
+			requiredEvents += type + ";";
 		}
-		
+
 		ContentValues values = new ContentValues();
 		values.put(LocalTransformationDB.COLUMN_BUNDLE_ID, bundleId);
-		values.put(LocalTransformationDB.COLUMN_TRANSFORMATION_NAME, transformationName);
-		values.put(LocalTransformationDB.COLUMN_PRODUCED_EVENT_TYPE, producedEventType);
-		values.put(LocalTransformationDB.COLUMN_REQUIRED_EVENT_TYPES, requiredEvents);
+		values.put(LocalTransformationDB.COLUMN_TRANSFORMATION_NAME,
+				transformationName);
+		values.put(LocalTransformationDB.COLUMN_PRODUCED_EVENT_TYPE,
+				producedEventType);
+		values.put(LocalTransformationDB.COLUMN_REQUIRED_EVENT_TYPES,
+				requiredEvents);
 		values.put(LocalTransformationDB.COLUMN_TRANSFORMATION_COSTS, costs);
-		long insertId = database.insert(LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS,
-				null, values);
+		long insertId = database
+				.insert(LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS,
+						null, values);
 		return insertId != -1;
 	}
 
@@ -71,39 +75,49 @@ public class LocalTransformationDBMS {
 		if (cursor.moveToPosition(position)) {
 
 			Transformation transformation = new Transformation(
-					cursor.getLong(cursor.getColumnIndex(LocalTransformationDB.COLUMN_BUNDLE_ID)),
-					cursor.getString(cursor.getColumnIndex(LocalTransformationDB.COLUMN_TRANSFORMATION_NAME)),
-					cursor.getString(cursor.getColumnIndex(LocalTransformationDB.COLUMN_PRODUCED_EVENT_TYPE)),
-					cursor.getInt(cursor.getColumnIndex(LocalTransformationDB.COLUMN_TRANSFORMATION_COSTS)));
-			
-			String requiredEventTypes = cursor.getString(cursor.getColumnIndex(LocalTransformationDB.COLUMN_REQUIRED_EVENT_TYPES));
-			String[] types = requiredEventTypes.split(";");			
-			for(String type : types) {
-				if(D)Log.d(TAG, "required event type: "+type);
+					cursor.getLong(cursor
+							.getColumnIndex(LocalTransformationDB.COLUMN_BUNDLE_ID)),
+					cursor.getString(cursor
+							.getColumnIndex(LocalTransformationDB.COLUMN_TRANSFORMATION_NAME)),
+					cursor.getString(cursor
+							.getColumnIndex(LocalTransformationDB.COLUMN_PRODUCED_EVENT_TYPE)),
+					cursor.getInt(cursor
+							.getColumnIndex(LocalTransformationDB.COLUMN_TRANSFORMATION_COSTS)));
+
+			String requiredEventTypes = cursor
+					.getString(cursor
+							.getColumnIndex(LocalTransformationDB.COLUMN_REQUIRED_EVENT_TYPES));
+			String[] types = requiredEventTypes.split(";");
+			for (String type : types) {
+				if (D)
+					Log.d(TAG, "required event type: " + type);
 				transformation.addRequiredEvent(type);
 			}
-			
+
 			return transformation;
 
 		} else
 			return null;
 	}
-	
+
 	public ArrayList<Transformation> getAvailableTransformations() {
 		ArrayList<Transformation> transformations = new ArrayList<Transformation>();
-		
-		if(D)Log.i(TAG, " quering for all transformations");
-		
+
+		if (D)
+			Log.i(TAG, " quering for all transformations");
+
 		Cursor cursor = database.query(
-				LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS, 
-				null, null, null, null, null, null);
-		
+				LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS, null, null,
+				null, null, null, null);
+
 		Transformation tempTrans;
-		for(int i = 0; i < cursor.getCount(); i++) {
+		for (int i = 0; i < cursor.getCount(); i++) {
 			tempTrans = cursorToTransformation(cursor, i);
-			if(tempTrans!=null) transformations.add(tempTrans);
-		}		
-		
+			if (tempTrans != null)
+				transformations.add(tempTrans);
+		}
+
+		cursor.close();
 		return transformations;
 	}
 
@@ -111,7 +125,51 @@ public class LocalTransformationDBMS {
 	 * @param name
 	 */
 	public int deleteTransformation(long name) {
-		return database.delete(LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS, 
-				LocalTransformationDB.COLUMN_BUNDLE_ID+" = ?", new String[] {name+""});	
+		return database.delete(
+				LocalTransformationDB.TABLE_LOCAL_TRANSFORMATIONS,
+				LocalTransformationDB.COLUMN_BUNDLE_ID + " = ?",
+				new String[] { name + "" });
+	}
+
+	public boolean addTraffic(String date, String trafficType, double xValue,
+			double yValue) {
+
+		ContentValues values = new ContentValues();
+		values.put(LocalTransformationDB.COLUMN_DATE_TEXT, date);
+		values.put(LocalTransformationDB.COLUMN_TYPE, trafficType);
+		values.put(LocalTransformationDB.COLUMN_X_AXIS, xValue);
+		values.put(LocalTransformationDB.COLUMN_Y_AXIS, yValue);
+		long insertId = database.insert(
+				LocalTransformationDB.TABLE_TRAFFIC_MON, null, values);
+		Log.e(TAG, "insert at: " + insertId);
+		return insertId != -1;
+	}
+
+	public ArrayList<TrafficData> getAllTrafficFromDate(String date, String type) {
+		ArrayList<TrafficData> list = new ArrayList<TrafficData>();
+		String q = "SELECT * FROM " + LocalTransformationDB.TABLE_TRAFFIC_MON
+//				+ ";";
+		 + " where( " + LocalTransformationDB.COLUMN_DATE_TEXT
+		 + " like '" + date + "%' AND " 
+		 + LocalTransformationDB.COLUMN_TYPE
+		 + " like '" + type + "%')" + "ORDER BY "
+		 + LocalTransformationDB.COLUMN_DATE_TEXT + ";";
+		Cursor cursor = database.rawQuery(q, null);
+		if (cursor.moveToFirst()) {
+			do {
+				TrafficData trafficData = new TrafficData(
+						cursor.getString(cursor
+								.getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT)),
+						cursor.getString(cursor
+								.getColumnIndex(LocalTransformationDB.COLUMN_TYPE)),
+						cursor.getDouble(cursor
+								.getColumnIndex(LocalTransformationDB.COLUMN_X_AXIS)),
+						cursor.getDouble(cursor
+								.getColumnIndex(LocalTransformationDB.COLUMN_Y_AXIS)));
+				list.add(trafficData);
+			} while (cursor.moveToNext());
+		}
+		cursor.close();
+		return list;
 	}
 }
