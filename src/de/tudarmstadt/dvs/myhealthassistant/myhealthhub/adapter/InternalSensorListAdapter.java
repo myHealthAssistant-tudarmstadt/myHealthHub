@@ -92,46 +92,53 @@ public class InternalSensorListAdapter extends ArrayAdapter<Integer> {
 
 		view.setTag(POS_TAG, position);
 
-		viewHolder.mSwitch.setEnabled(false);
-		viewHolder.mSwitch.setVisibility(View.GONE);
 		String sensorName = "Unknown";
+		
 		switch (item) {
 		case Sensor.TYPE_ACCELEROMETER:
 			sensorName = "Accelerometer";
-			viewHolder.mSwitch.setEnabled(true);
+			viewHolder.mSwitch.setChecked(isOn(item));
 			viewHolder.mSwitch.setVisibility(View.VISIBLE);
 			break;
 		case Sensor.TYPE_LIGHT:
 			sensorName = "Light";
-			viewHolder.mSwitch.setEnabled(true);
-			viewHolder.mSwitch.setVisibility(View.VISIBLE);
+			viewHolder.mSwitch.setChecked(isOn(item));
 			break;
 		case Sensor.TYPE_AMBIENT_TEMPERATURE:
 			sensorName = "Ambient Temperature";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_GRAVITY:
 			sensorName = "Gravity";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_GYROSCOPE:
 			sensorName = "Gyroscope";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_LINEAR_ACCELERATION:
 			sensorName = "Linear Acceleration";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_MAGNETIC_FIELD:
 			sensorName = "Magnetic Field";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_PRESSURE:
 			sensorName = "Pressure";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_PROXIMITY:
 			sensorName = "Proximity";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_RELATIVE_HUMIDITY:
 			sensorName = "Relative Humidity";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 		case Sensor.TYPE_ROTATION_VECTOR:
 			sensorName = "Rotation Vector";
+			viewHolder.mSwitch.setVisibility(View.GONE);
 			break;
 
 		}
@@ -148,7 +155,6 @@ public class InternalSensorListAdapter extends ArrayAdapter<Integer> {
 						setSensor(item, isChecked);
 					}
 				});
-		viewHolder.mSwitch.setChecked(false);
 		return view;
 	}
 
@@ -162,10 +168,15 @@ public class InternalSensorListAdapter extends ArrayAdapter<Integer> {
 	}
 
 	private boolean isOn(int sensorType) {
-		return preferences.getBoolean(PREF_SENSOR_TYPE + sensorType, false);
+		boolean b = preferences.getBoolean(PREF_SENSOR_TYPE + sensorType, false);
+		if (b){
+			setSensor(sensorType, true);
+		}
+		return b;
 	}
 
 	private boolean setSensor(int type, boolean on) {
+		boolean b = preferences.edit().putBoolean(PREF_SENSOR_TYPE + type, on).commit();
 		if (on){
 			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
 			intent.putExtra(PREF_SENSOR_TYPE, type);
@@ -174,6 +185,6 @@ public class InternalSensorListAdapter extends ArrayAdapter<Integer> {
 			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
 			getContext().stopService(intent);
 		}
-		return preferences.edit().putBoolean(PREF_SENSOR_TYPE + type, on).commit();
+		return b;
 	}
 }

@@ -17,6 +17,15 @@
 
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.IMyHealthHubRemoteService;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
@@ -26,12 +35,16 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.SensorReadingEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.AmbientLightEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventKnee;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphPlotFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.graphActivities.Coordinate;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -39,8 +52,11 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * 
@@ -55,66 +71,97 @@ public class InternalSensorService extends Service implements
 	private static final String TAG = InternalSensorService.class
 			.getSimpleName();
 	private SensorManager mSensorManager;
-
-	// @Override
-	// public void onCreate() {
-	// // The service is being created
-	//
-	// }
+	private SharedPreferences pref;
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		// The service is starting, due to a call to startService()
+	public void onCreate() {
+		// The service is being created
+		Log.e(TAG, "onCreate");
+		lastAddedLightData = "";
+		readingLightValue = 0.0d;
+		lightDataCounter = 1;
+		listLightData = new ArrayList<Coordinate>();
 
-		// A client wants to listen to a Sensor Type
-		if (intent == null)
-			return 0;
-		Bundle extras = intent.getExtras();
-		if (extras != null)
-			if (extras.containsKey(InternalSensorListAdapter.PREF_SENSOR_TYPE)) {
-				mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		lastAddedAccData = "";
+		readingAccValue = 0.0d;
+		accDataCounter = 1;
+		listAccData = new ArrayList<Coordinate>();
 
-				int mSensorType = extras
-						.getInt(InternalSensorListAdapter.PREF_SENSOR_TYPE);
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		pref = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
 
-				Sensor mSensor = mSensorManager.getDefaultSensor(mSensorType);
-				mSensorManager.registerListener(this, mSensor,
-						SensorManager.SENSOR_DELAY_NORMAL);
+		if (pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+				+ Sensor.TYPE_ACCELEROMETER, false)) {
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+		if (pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+				+ Sensor.TYPE_LIGHT, false)) {
+			Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
 
-				// Notice User about this
-				return systemNotice();
-			} else
-				Log.e(TAG, "contains no extra SensorType");
-
-		return 0;
 	}
 
-	private int systemNotice() {
-		int t = START_STICKY;
-		Log.e(TAG, "call me redundant BABY!  onStartCommand service");
-
-		int myID = android.os.Process.myPid();
-		// The intent to launch when the user clicks the expanded notification
-		Intent intent = new Intent(this, MyHealthHubWithFragments.class);
-		// Intent intent = new Intent();
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent pendIntent = PendingIntent
-				.getActivity(this, 0, intent, 0);
-
-		Notification notice = new Notification.Builder(getApplicationContext())
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setWhen(System.currentTimeMillis())
-				.setContentTitle(getPackageName())
-				.setContentText("Start advertising events")
-				.setContentIntent(pendIntent).getNotification();
-
-		notice.flags |= Notification.FLAG_AUTO_CANCEL;
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(myID, notice);
-
-		return t;
-	}
+	// @Override
+	// public int onStartCommand(Intent intent, int flags, int startId) {
+	// // The service is starting, due to a call to startService()
+	//
+	// // A client wants to listen to a Sensor Type
+	// if (intent == null)
+	// return -1;
+	// Bundle extras = intent.getExtras();
+	// if (extras != null)
+	// if (extras.containsKey(InternalSensorListAdapter.PREF_SENSOR_TYPE)) {
+	// mSensorManager = (SensorManager)
+	// getSystemService(Context.SENSOR_SERVICE);
+	//
+	// int mSensorType = extras
+	// .getInt(InternalSensorListAdapter.PREF_SENSOR_TYPE);
+	//
+	// Sensor mSensor = mSensorManager.getDefaultSensor(mSensorType);
+	// mSensorManager.registerListener(this, mSensor,
+	// SensorManager.SENSOR_DELAY_NORMAL);
+	//
+	// // Notice User about this
+	// systemNotice();
+	// } else
+	// Log.e(TAG, "contains no extra SensorType");
+	//
+	// return 0;
+	// }
+	//
+	// private int systemNotice() {
+	// int t = START_STICKY;
+	// Log.e(TAG, "call me redundant BABY!  onStartCommand service");
+	//
+	// int myID = android.os.Process.myPid();
+	// // The intent to launch when the user clicks the expanded notification
+	// Intent intent = new Intent(this, MyHealthHubWithFragments.class);
+	// // Intent intent = new Intent();
+	// intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+	// | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	// PendingIntent pendIntent = PendingIntent
+	// .getActivity(this, 0, intent, 0);
+	//
+	// Notification notice = new Notification.Builder(getApplicationContext())
+	// .setSmallIcon(R.drawable.ic_launcher)
+	// .setWhen(System.currentTimeMillis())
+	// .setContentTitle(getPackageName())
+	// .setContentText("Start advertising events")
+	// .setContentIntent(pendIntent).getNotification();
+	//
+	// notice.flags |= Notification.FLAG_AUTO_CANCEL;
+	// NotificationManager mNotificationManager = (NotificationManager)
+	// getSystemService(Context.NOTIFICATION_SERVICE);
+	// mNotificationManager.notify(myID, notice);
+	//
+	// return t;
+	// }
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -143,6 +190,7 @@ public class InternalSensorService extends Service implements
 
 	@Override
 	public void onDestroy() {
+		Log.e(TAG, "onDestroy");
 		if (mSensorManager != null) {
 			// unregister all sensors
 			mSensorManager.unregisterListener(this);
@@ -150,7 +198,17 @@ public class InternalSensorService extends Service implements
 			Log.e(TAG, "mSensorManager is null!");
 
 		// The service is no longer used and is being destroyed
-		stopForeground(true);
+		// stopForeground(true);
+
+		if (pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+				+ Sensor.TYPE_ACCELEROMETER, false)
+				|| pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+						+ Sensor.TYPE_LIGHT, false)) {
+			// in case of this service being destroyed without user's settings
+			// try to set up an alarm to resurrect this after 5min
+			WakeupAlarm wAlarm = new WakeupAlarm();
+			wAlarm.setOnceTimeAlarm(this.getApplicationContext());
+		}
 
 		super.onDestroy();
 	}
@@ -183,6 +241,7 @@ public class InternalSensorService extends Service implements
 					y, z, x, y, z);
 
 			sendToChannel(accEvt, AbstractChannel.RECEIVER);
+			gotAccEvent(getTimestamp(), getCurrentTime(), x, y, z);
 		}
 
 		else if (mSensorType == Sensor.TYPE_LIGHT
@@ -199,14 +258,15 @@ public class InternalSensorService extends Service implements
 					SensorReadingEvent.AMBIENT_LIGHT, getTimestamp(),
 					"location", "object", x, AmbientLightEvent.UNIT_LUX);
 			sendToChannel(lightEvnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), getCurrentTime(), x);
 
 		}
 
 	}
 
-	public String getTimestamp() {
+	private String getTimestamp() {
 		return (String) android.text.format.DateFormat.format(
-				"yyyy-MM-dd_hh:mm:ss", new java.util.Date());
+				"yyyy-MM-dd_kk:mm:ss", new java.util.Date());
 	}
 
 	private void sendToChannel(Event evt, String channel) {
@@ -217,4 +277,149 @@ public class InternalSensorService extends Service implements
 		LocalBroadcastManager.getInstance(getApplicationContext())
 				.sendBroadcast(i);
 	}
+
+	// ###############################################################################
+	// working with SensorEvent
+	// normally a new app can subscript to myHealthHub to receive these events
+
+	private static String lastAddedLightData = "";
+	private double readingLightValue;
+	private int lightDataCounter;
+	private ArrayList<Coordinate> listLightData;
+
+	private static String lastAddedAccData = "";
+	private double readingAccValue;
+	private int accDataCounter;
+	private ArrayList<Coordinate> listAccData = new ArrayList<Coordinate>();
+
+	private static double getCurrentTime() {
+		SimpleDateFormat sdfDate = new SimpleDateFormat("hh.mm");
+		Date now = new Date();
+		String strDate = sdfDate.format(now);
+		return Double.parseDouble(strDate);
+	}
+
+	private void gotLightEvent(String dateOfMeasurement, double timeOfMes,
+			float value) {
+		if (lastAddedLightData == null || lastAddedLightData.isEmpty())
+			lastAddedLightData = dateOfMeasurement;
+		else {
+			if (minutesDiff(lastAddedLightData, dateOfMeasurement,
+					DateUtils.MINUTE_IN_MILLIS)) {
+				// after each min the added up data being divided by
+				// average and stored
+				double yValue = readingLightValue / lightDataCounter;
+				double xValue = timeOfMes;
+				listLightData.add(new Coordinate(xValue, yValue));
+
+				// store to dbs each 10 min (when size of list reach xxx0)
+				if (listLightData.size() % 10 == 0) {
+					addTrafficToDB(dateOfMeasurement,
+							GraphPlotFragment.lightGrpDes, listLightData,
+							listLightData.size() - 10); // add only the next 10
+														// data to dbs
+				}
+				// the data being reset after that
+				readingLightValue = Double.parseDouble(Float.toString(value));
+				lightDataCounter = 1;
+
+				lastAddedLightData = dateOfMeasurement;
+			} else {
+				// within a minute value being added up only
+				readingLightValue += Double.parseDouble(Float.toString(value));
+				lightDataCounter++;
+
+			}
+		}
+	}
+
+	private void gotAccEvent(String dateOfMeasurement, double timeOfMes, int x,
+			int y, int z) {
+		if (lastAddedAccData == null || lastAddedAccData.isEmpty())
+			lastAddedAccData = dateOfMeasurement;
+		else {
+			if (minutesDiff(lastAddedAccData, dateOfMeasurement,
+					DateUtils.MINUTE_IN_MILLIS)) {
+				// after each min the added up data being divided by
+				// average and stored
+				double yValue = readingAccValue / accDataCounter;
+				double xValue = timeOfMes;
+				listAccData.add(new Coordinate(xValue, yValue));
+
+				// store to dbs each 10 min (when size of list reach x0)
+				if (listAccData.size() % 10 == 0) //
+					addTrafficToDB(dateOfMeasurement,
+							GraphPlotFragment.motionGrpDes, listAccData,
+							listAccData.size() - 10);//
+
+				// the data being reset after that
+				readingAccValue = Math.sqrt(x * x + y * y + z * z); // Euclidean
+				// length
+				accDataCounter = 1;
+
+				lastAddedAccData = dateOfMeasurement;
+			} else {
+				// within a minute value being added up only
+				readingAccValue += Math.sqrt(x * x + y * y + z * z);
+				accDataCounter++;
+			}
+		}
+	}
+
+	/**
+	 * calculate the difference in minutes between two dates in millisecond
+	 * 
+	 * @param first
+	 * @param second
+	 * @return true if two dates are difference by ONE minute
+	 */
+	public boolean minutesDiff(String firstDate, String secondDate,
+			long timespan) {
+		SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
+
+		try {
+			Date first = dfDate.parse(firstDate);
+			Date second = dfDate.parse(secondDate);
+
+			long diff = ((second.getTime() / timespan) - (first.getTime() / timespan));
+
+			return (diff < 1) ? false : true;
+
+		} catch (ParseException e) {
+			Log.e(TAG, e.toString());
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	private LocalTransformationDBMS transformationDB;
+
+	public void addTrafficToDB(String timeOfMeasurement, String type,
+			ArrayList<Coordinate> listData, int fromPos) {
+		String date = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
+
+		try {
+			Date today = sdf.parse(timeOfMeasurement);
+			sdf.applyPattern("dd-MM-yyyy");
+			
+			date = sdf.format(today);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+			Log.e(TAG, e.toString());
+		}
+
+//		Log.e(TAG, timeOfMeasurement + "-date=" + date + " type:" + type);
+		transformationDB = new LocalTransformationDBMS(
+				this.getApplicationContext());
+		transformationDB.open();
+		for (int i = fromPos; i < listData.size(); i++) {
+			Coordinate d = listData.get(i);
+			transformationDB.addTraffic(date, type, d.getX(), d.getY());
+		}
+		transformationDB.close();
+	}
+
 }

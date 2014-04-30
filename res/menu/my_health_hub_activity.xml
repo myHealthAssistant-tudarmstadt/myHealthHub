@@ -29,6 +29,11 @@
         android:title="@string/men_transformation_manager">
     </item>
     <item
+        android:id="@+id/men_internal_sensor"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:title="Internal Sensor Config">
+    </item>
+    <item
         android:id="@+id/men_pers"
         android:icon="@android:drawable/dark_header"
         android:title="Personalization">

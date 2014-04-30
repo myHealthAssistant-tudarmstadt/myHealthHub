@@ -22,7 +22,10 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.hardware.Sensor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -36,12 +39,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.EditPreferences;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.InternalSensorListActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.ManageXMLFiles;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.PersonalActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.InternalSensorListAdapter;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.EventGeneratorFragment;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphFragment;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.InternalSensorListFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphPlotFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigurationListFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SimpleEventsFragment;
@@ -84,6 +88,18 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		
+		// set up listener for internal sensor:
+		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		if (pref.getBoolean("firstBoot", false)){
+			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_ACCELEROMETER, true).commit();
+			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_LIGHT, true).commit();
+			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+			getApplicationContext().startService(intent);
+			
+			pref.edit().putBoolean("firstBoot", false).commit();
+		}
+		
 
 	}
 
@@ -117,13 +133,14 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 				fragment = (Fragment) new SensorConfigFragment();
 				return fragment;
 
-			case 1:
-				fragment = new InternalSensorListFragment();
-//				fragment = new SimpleEventsFragment();
-				return fragment;
+//			case 1:
+//				fragment = new InternalSensorListFragment();
+////				fragment = new SimpleEventsFragment();
+//				return fragment;
 
-			case 2:
-				fragment = new GraphFragment();
+			case 1:
+				fragment = new GraphPlotFragment();
+//				fragment = new GraphFragment();
 //				fragment = new EventGeneratorFragment();
 				return fragment;
 
@@ -140,8 +157,8 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			// Show 4 total pages.
-			return 4;
+			// Show 2 total pages.
+			return 2;
 		}
 
 		@Override
@@ -213,6 +230,12 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 			Intent pers_intent = new Intent(getApplicationContext(),
 					PersonalActivity.class);
 			startActivity(pers_intent);
+			return true;
+			
+		case R.id.men_internal_sensor:
+			Intent in_sensor = new Intent(getApplicationContext(),
+					InternalSensorListActivity.class);
+			startActivity(in_sensor);
 			return true;
 
 			// Manage XML files:

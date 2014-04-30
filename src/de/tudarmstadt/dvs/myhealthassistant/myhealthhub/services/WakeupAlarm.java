@@ -19,12 +19,14 @@
  package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.Preferences;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.InternalSensorListAdapter;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 
@@ -41,13 +43,21 @@ public class WakeupAlarm extends BroadcastReceiver{
         SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		if (preferences.getBoolean(Preferences.SYS_MONITORING, false)) {
-			startService(context);
+			startSMService(context);
+		}
+		
+		if (preferences.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+				+ Sensor.TYPE_ACCELEROMETER, false)
+				|| preferences.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
+						+ Sensor.TYPE_LIGHT, false)) {
+			Intent i = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+			context.getApplicationContext().startService(i);
 		}
 
         wl.release();
 	}
 	
-	private void startService(Context context){
+	private void startSMService(Context context){
 		 // start System monitor service
 		Intent i = new Intent(context.getApplicationContext(), SystemMonitor.class);
 		context.getApplicationContext().startService(i);
@@ -59,8 +69,19 @@ public class WakeupAlarm extends BroadcastReceiver{
 //         Intent i = new Intent(context, WakeupAlarm.class);
          Intent i = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ALARM");
          PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+         // repeat after 5min
          am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * 5, pi); // Millisec * Second * Minute FIXME
      }
+	 
+	 public void setOnceTimeAlarm(Context context){
+		 AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+//       Intent i = new Intent(context, WakeupAlarm.class);
+       Intent i = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ALARM");
+       PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+       // set for 5min
+       long triggerAtMillis = System.currentTimeMillis() + (1000 * 60 * 5);
+       am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
+	 }
 
      public void cancelAlarm(Context context)
      {

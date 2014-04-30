@@ -57,6 +57,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
+ * A personal reference list
  * 
  * @author HieuHa
  * 

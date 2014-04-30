@@ -98,7 +98,7 @@ public final class R {
         public static final int female=0x7f0d004c;
         public static final int gender_group=0x7f0d004a;
         public static final int graphs=0x7f0d0016;
-        public static final int group_popupmenu=0x7f0d006d;
+        public static final int group_popupmenu=0x7f0d006e;
         public static final int imageView1=0x7f0d0012;
         public static final int light_graph=0x7f0d001b;
         public static final int lin2=0x7f0d0064;
@@ -106,11 +106,12 @@ public final class R {
         public static final int ll_bluetooth_sel=0x7f0d0051;
         public static final int ll_bluetooth_type=0x7f0d004e;
         public static final int male=0x7f0d004b;
-        public static final int men_manage_xml=0x7f0d006c;
-        public static final int men_pers=0x7f0d006b;
+        public static final int men_internal_sensor=0x7f0d006b;
+        public static final int men_manage_xml=0x7f0d006d;
+        public static final int men_pers=0x7f0d006c;
         public static final int men_preferences=0x7f0d0069;
         public static final int men_transformation_manager=0x7f0d006a;
-        public static final int menu1=0x7f0d006e;
+        public static final int menu1=0x7f0d006f;
         public static final int motion_graph=0x7f0d001c;
         public static final int new_devices=0x7f0d000a;
         public static final int pager=0x7f0d0000;
