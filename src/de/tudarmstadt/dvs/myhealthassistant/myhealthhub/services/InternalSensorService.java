@@ -20,15 +20,9 @@ package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.IMyHealthHubRemoteService;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.MyHealthHubWithFragments;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.InternalSensorListAdapter;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.AbstractChannel;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
@@ -38,9 +32,6 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.ph
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphPlotFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.graphActivities.Coordinate;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -49,14 +40,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.SparseArray;
 
 /**
  * 
@@ -72,6 +61,7 @@ public class InternalSensorService extends Service implements
 			.getSimpleName();
 	private SensorManager mSensorManager;
 	private SharedPreferences pref;
+	private static final long timespan = DateUtils.MINUTE_IN_MILLIS; // FIXME if needed
 
 	@Override
 	public void onCreate() {
@@ -86,6 +76,7 @@ public class InternalSensorService extends Service implements
 		readingAccValue = 0.0d;
 		accDataCounter = 1;
 		listAccData = new ArrayList<Coordinate>();
+		accValues = new ArrayList<Double>();
 
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		pref = PreferenceManager
@@ -305,7 +296,7 @@ public class InternalSensorService extends Service implements
 			lastAddedLightData = dateOfMeasurement;
 		else {
 			if (minutesDiff(lastAddedLightData, dateOfMeasurement,
-					DateUtils.MINUTE_IN_MILLIS)) {
+					timespan)) {
 				// after each min the added up data being divided by
 				// average and stored
 				double yValue = readingLightValue / lightDataCounter;
@@ -333,34 +324,60 @@ public class InternalSensorService extends Service implements
 		}
 	}
 
+	private ArrayList<Double> accValues = new ArrayList<Double>();
 	private void gotAccEvent(String dateOfMeasurement, double timeOfMes, int x,
 			int y, int z) {
-		if (lastAddedAccData == null || lastAddedAccData.isEmpty())
+		if (lastAddedAccData == null || lastAddedAccData.isEmpty()){
 			lastAddedAccData = dateOfMeasurement;
-		else {
+		} else {
 			if (minutesDiff(lastAddedAccData, dateOfMeasurement,
-					DateUtils.MINUTE_IN_MILLIS)) {
+					timespan)) {
 				// after each min the added up data being divided by
 				// average and stored
-				double yValue = readingAccValue / accDataCounter;
-				double xValue = timeOfMes;
-				listAccData.add(new Coordinate(xValue, yValue));
+//				double yValue = readingAccValue / accDataCounter;
+//				double xValue = timeOfMes;
+//				listAccData.add(new Coordinate(xValue, yValue));
+//
+//				// store to dbs each 10 min (when size of list reach x0)
+//				if (listAccData.size() % 10 == 0) //
+//					addTrafficToDB(dateOfMeasurement,
+//							GraphPlotFragment.motionGrpDes, listAccData,
+//							listAccData.size() - 10);//
+//
+//				// the data being reset after that
+//				readingAccValue = Math.sqrt(x * x + y * y + z * z); // Euclidean
+//				// length
+//				accDataCounter = 1;
 
+				double xValue = timeOfMes;
+				double mean = 0.0d;
+				double variance = 0.0d;
+				int n = accValues.size();
+				for (double b : accValues){
+					mean += b;
+				}
+				mean = mean/n;
+				for (double b : accValues){
+					variance += (mean - b) * (mean - b);
+				}
+				variance = variance/n;
+				
+				double yValue = Math.sqrt(variance);  // standard Deviation
+				listAccData.add(new Coordinate(xValue, yValue));
+				
 				// store to dbs each 10 min (when size of list reach x0)
 				if (listAccData.size() % 10 == 0) //
 					addTrafficToDB(dateOfMeasurement,
 							GraphPlotFragment.motionGrpDes, listAccData,
-							listAccData.size() - 10);//
-
+							listAccData.size() - 10);
 				// the data being reset after that
-				readingAccValue = Math.sqrt(x * x + y * y + z * z); // Euclidean
-				// length
-				accDataCounter = 1;
-
+				accValues = new ArrayList<Double>();
+				
 				lastAddedAccData = dateOfMeasurement;
 			} else {
 				// within a minute value being added up only
-				readingAccValue += Math.sqrt(x * x + y * y + z * z);
+//				readingAccValue += Math.sqrt(x * x + y * y + z * z);
+				accValues.add(Math.sqrt(x * x + y * y + z * z));
 				accDataCounter++;
 			}
 		}
@@ -411,7 +428,7 @@ public class InternalSensorService extends Service implements
 			Log.e(TAG, e.toString());
 		}
 
-//		Log.e(TAG, timeOfMeasurement + "-date=" + date + " type:" + type);
+		Log.e(TAG, timeOfMeasurement + "-date=" + date + " type:" + type);
 		transformationDB = new LocalTransformationDBMS(
 				this.getApplicationContext());
 		transformationDB.open();

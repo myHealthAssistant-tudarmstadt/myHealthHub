@@ -21,6 +21,9 @@
  */
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -51,6 +54,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
@@ -93,8 +97,12 @@ public class SystemMonitor extends Service {
 	private LocationResult locationResult = new LocationResult() {
 		@Override
 		public void gotLocation(Location location) {
+			String t = getTimestamp() + "\n";
+			t += "BatteryPercent: " + batteryPercent + "\n";
+			t += "-----------------------------------------";
+			writeStringToLogFile(t);
 			// Got the location!
-			publishResult(location);
+//			publishResult(location);
 		}
 	};
 
@@ -179,6 +187,20 @@ public class SystemMonitor extends Service {
 		this.unregisterReceiver(batteryLvlReceiver);
 		super.onDestroy();
 	}
+	
+    private void writeStringToLogFile(String text) {
+    	File root = Environment.getExternalStorageDirectory();
+    	File file = new File(root, "SystemBatteryMonitor.txt");
+        try {
+        	if(!file.exists()) file.createNewFile();
+			FileWriter filewriter = new FileWriter(file, true);
+			filewriter.append(text);
+			filewriter.close();
+		} catch (IOException e) {
+			Toast.makeText(this, "Unable to write file: "+e.toString(), Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		} 
+    }
 
 	private void publishResult(Location loc) {
 		String t = getTimestamp() + "\n";
@@ -213,7 +235,7 @@ public class SystemMonitor extends Service {
 
 			@Override
 			protected Void doInBackground(String... params) {
-				String message = params[0];
+//				String message = params[0];
 				// GMailSender sender = new GMailSender(
 				// null,
 				// null);
