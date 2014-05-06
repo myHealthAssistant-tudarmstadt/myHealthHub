@@ -29,6 +29,7 @@
     <string name="settings_sensor_start_listening">settingsSensorListen</string>
     <string name="settings_bluetooth_sensor_list">settingsBluetoothSensorList</string>
     <string name="settings_sensor_status">settingsSensorStatus</string>
+    <string name="settings_traffic_clearing">settingsTrafficClearing</string>
     
 	<!--     sensor type -->
 	<string name="pulse">Pulse</string>

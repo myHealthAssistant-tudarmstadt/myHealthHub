@@ -100,6 +100,7 @@ public class GraphPlotFragment extends Fragment {
 		});
 
 		Button refrBtn = (Button) rootView.findViewById(R.id.refresh_btn);
+		refrBtn.setVisibility(View.GONE);
 		refrBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -257,50 +258,10 @@ public class GraphPlotFragment extends Fragment {
 					graphTitle);
 			// graphView.setVerticalLabels(new String[] { "high", "mid", "low"
 			// });
-			graphView.setManualYAxisBounds(11.0d, 9.0d);
-			// graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
-			// @Override
-			// public String formatLabel(double value, boolean isValueX) {
-			// if (!isValueX) {
-			// if (value <= 10) {
-			// return "low";
-			// } else if (10 < value && value < 11) {
-			// return "mid";
-			// } else {
-			// return "hgh";
-			// }
-			// }
-			// return null; // let graphview generate X-axis label for us
-			// }
-			// });
+			// graphView.setManualYAxisBounds(11.0d, 9.0d);
 		} else
 			graphView = new LineGraphView(
 					getActivity().getApplicationContext(), graphTitle);
-
-		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
-			@Override
-			public String formatLabel(double value, boolean isValueX) {
-				if (isValueX) {
-					// convert (double) hour.mm to hour:mm
-					return new DecimalFormat("00.00").format(value).replaceAll(
-							"\\,", ":");
-				}
-				return null; // let graphview generate X-axis label for us
-			}
-		});
-
-		// add data
-		graphView.addSeries(series);
-		// set view port, start=2, size=10
-		graphView.setViewPort(2, 10);
-		graphView.setScrollable(false);
-		// optional - activate scaling / zooming
-		// graphView.setScalable(true);
-		// optional - legend
-		// graphView.setShowLegend(true);
-		graphView.getGraphViewStyle().setNumVerticalLabels(3);
-		graphView.getGraphViewStyle().setNumHorizontalLabels(5);
-		graphView.getGraphViewStyle().setVerticalLabelsWidth(100);
 
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			@Override
@@ -312,16 +273,33 @@ public class GraphPlotFragment extends Fragment {
 				if (fractionalPart > 0.59) {
 					whole = integralPart + 1.0d + (fractionalPart - 0.60);
 				}
-
+				
 				if (isValueX) {
-					// convert the X-Axis label from (double) hour.mm to
-					// (String) "hour:mm"
+					// convert (double) hour.mm to hour:mm
 					return new DecimalFormat("00.00").format(whole).replaceAll(
 							"\\,", ":");
 				}
-				return null; // let graphview generate Y-axis label for us
+				else {
+					if (value > 1000){
+						return "high";
+					}
+					return new DecimalFormat("#0.00").format(value);
+				}
 			}
 		});
+
+		// add data
+		graphView.addSeries(series);
+		// set view port, start=2, size=10
+		// graphView.setViewPort(2, 10);
+		graphView.setScrollable(false);
+		// optional - activate scaling / zooming
+		// graphView.setScalable(true);
+		// optional - legend
+		// graphView.setShowLegend(true);
+		graphView.getGraphViewStyle().setNumVerticalLabels(3);
+		graphView.getGraphViewStyle().setNumHorizontalLabels(5);
+		graphView.getGraphViewStyle().setVerticalLabelsWidth(80);
 
 		LinearLayout layout = (LinearLayout) rootView.findViewById(Rid);
 		layout.removeAllViews();

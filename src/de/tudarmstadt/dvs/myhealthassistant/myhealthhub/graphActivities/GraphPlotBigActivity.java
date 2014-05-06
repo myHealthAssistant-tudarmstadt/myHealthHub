@@ -260,7 +260,9 @@ public class GraphPlotBigActivity extends Activity {
 					return new DecimalFormat("00.00").format(whole).replaceAll(
 							"\\,", ":");
 				}
-				return null; // let graphview generate Y-axis label for us
+				else {
+					return new DecimalFormat("#0.00").format(value);
+				}
 			}
 		});
 		
@@ -275,7 +277,7 @@ public class GraphPlotBigActivity extends Activity {
 		// optional - legend
 		// graphView.setShowLegend(true);
 //		graphView.getGraphViewStyle().setNumVerticalLabels(3);
-		graphView.getGraphViewStyle().setVerticalLabelsWidth(200);
+		graphView.getGraphViewStyle().setVerticalLabelsWidth(100);
 		// graphView.getGraphViewStyle().setNumHorizontalLabels(7);
 
 		// graphView.getGraphViewStyle().setNumVerticalLabels(7);

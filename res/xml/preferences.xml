@@ -87,6 +87,10 @@
                 android:summary="Time until the next series of attempts is started."
                 android:title="Time until next Check (in ms)" />
         </PreferenceScreen>
+        <Preference 
+            android:title="@string/title_traffic_clearing"
+            android:key="@string/settings_traffic_clearing"
+            android:summary="@string/sum_traffic_clearing"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Notifications" >
         <CheckBoxPreference

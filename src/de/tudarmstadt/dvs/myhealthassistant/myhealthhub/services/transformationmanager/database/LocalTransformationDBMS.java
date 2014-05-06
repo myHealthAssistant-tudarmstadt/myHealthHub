@@ -191,7 +191,13 @@ public class LocalTransformationDBMS {
 		cursor.close();
 		return list;
 	}
-
+	
+	public void deleteAllTrafficRecords() {
+		// drop and recreate table
+		database.execSQL("DROP TABLE IF EXISTS " + LocalTransformationDB.TABLE_TRAFFIC_MON);
+		database.execSQL(LocalTransformationDB.TRAFFIC_MON_CREATE);
+	}
+	
 	public int deleteAllTrafficFromDate(String date) {
 		return database.delete(LocalTransformationDB.TABLE_TRAFFIC_MON,
 				LocalTransformationDB.COLUMN_DATE_TEXT + " like '" + date

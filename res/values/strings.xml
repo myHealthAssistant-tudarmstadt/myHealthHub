@@ -75,6 +75,12 @@
         check for his last known location.
         </string>
         
+   	<string name="popup_sys_traffic_clearing">
+   	    Clear all traffic data from device, are you sure?
+   	</string>
+   	<string name="title_traffic_clearing">Delete Recorded Data</string>
+   	<string name="sum_traffic_clearing">Clear all recorded data from device</string>
+        
 <!--     Sensor Settings -->
 	<string name="value_unknown">Unknown</string>
 	<string name="title_bluetooth_sensor_type">Sensor Type</string>

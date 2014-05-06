@@ -25,6 +25,8 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.Preferences;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.SystemMonitor;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.WakeupAlarm;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDB;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -73,7 +75,7 @@ public class EditPreferences extends PreferenceActivity {
 
 						@Override
 						public boolean onPreferenceClick(Preference preference) {
-							openDialog();
+							openPopupDialog("System Monitoring", context.getString(R.string.popup_sys_monitor), sysMonDialogClickListener);
 							// checkbox appear to be checked before the dialog
 							// appear, so we force it to not change the display
 							// yet
@@ -94,17 +96,26 @@ public class EditPreferences extends PreferenceActivity {
 						}
 					});
 
+			Preference trafficClearing = findPreference(getResources().getString(R.string.settings_traffic_clearing));
+			trafficClearing
+					.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+						@Override
+						public boolean onPreferenceClick(Preference pref) {
+							openPopupDialog("Clear Records", context.getString(R.string.popup_sys_traffic_clearing), trafficClearingDialogClickListener);
+							return true;
+						}
+					});
 		}
 	}
 
-	private void openDialog() {
+	private void openPopupDialog(String title, String mess, DialogInterface.OnClickListener dialogClickListener) {
 		LayoutInflater layoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		TextView bodyView = (TextView) layoutInflater.inflate(
 				R.layout.popup_dialog, null);
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-		dialog.setView(bodyView).setTitle("System Monitoring")
-				.setMessage(context.getString(R.string.popup_sys_monitor))
+		dialog.setView(bodyView).setTitle(title)
+				.setMessage(mess)
 				.setPositiveButton(android.R.string.yes, dialogClickListener)
 				.setNegativeButton(android.R.string.no, dialogClickListener)
 				.create().show();
@@ -112,7 +123,7 @@ public class EditPreferences extends PreferenceActivity {
 	}
 
 	WakeupAlarm wAlarm = new WakeupAlarm();
-	private DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+	private DialogInterface.OnClickListener sysMonDialogClickListener = new DialogInterface.OnClickListener() {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
@@ -127,6 +138,26 @@ public class EditPreferences extends PreferenceActivity {
 				checkboxPref.setChecked(false);
 				// cancel the alarm
 				wAlarm.cancelAlarm(context);
+				dialog.dismiss();
+				break;
+			}
+		}
+	};
+	
+	private DialogInterface.OnClickListener trafficClearingDialogClickListener = new DialogInterface.OnClickListener() {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			switch (which) {
+			case DialogInterface.BUTTON_POSITIVE:
+				LocalTransformationDBMS db = new LocalTransformationDBMS(getApplicationContext());
+				db.open();
+				db.deleteAllTrafficRecords();
+				db.close();
+				dialog.dismiss();
+				break;
+
+			case DialogInterface.BUTTON_NEGATIVE:
+				// do nothing
 				dialog.dismiss();
 				break;
 			}
