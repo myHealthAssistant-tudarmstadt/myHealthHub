@@ -278,7 +278,7 @@ public class GraphPlotBigActivity extends Activity {
 		// graphView.setShowLegend(true);
 //		graphView.getGraphViewStyle().setNumVerticalLabels(3);
 		graphView.getGraphViewStyle().setVerticalLabelsWidth(100);
-		// graphView.getGraphViewStyle().setNumHorizontalLabels(7);
+		 graphView.getGraphViewStyle().setNumHorizontalLabels(5);
 
 		// graphView.getGraphViewStyle().setNumVerticalLabels(7);
 		// graphView.setManualYAxisBounds(300.0d, 0.0d);

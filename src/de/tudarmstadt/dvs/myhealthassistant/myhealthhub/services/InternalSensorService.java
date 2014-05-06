@@ -290,12 +290,14 @@ public class InternalSensorService extends Service implements
 		return Double.parseDouble(strDate);
 	}
 
+
+	private ArrayList<Double> lightValues = new ArrayList<Double>();
 	private void gotLightEvent(String dateOfMeasurement, double timeOfMes,
 			float value) {
 		if (lastAddedLightData == null || lastAddedLightData.isEmpty())
 			lastAddedLightData = dateOfMeasurement;
 		else {
-			if (minutesDiff(lastAddedLightData, dateOfMeasurement,
+			if (timeDiff(lastAddedLightData, dateOfMeasurement,
 					timespan)) {
 				// after each min the added up data being divided by
 				// average and stored
@@ -306,9 +308,8 @@ public class InternalSensorService extends Service implements
 				// store to dbs each 10 min (when size of list reach xxx0)
 				if (listLightData.size() % 10 == 0) {
 					addTrafficToDB(dateOfMeasurement,
-							GraphPlotFragment.lightGrpDes, listLightData,
-							listLightData.size() - 10); // add only the next 10
-														// data to dbs
+							GraphPlotFragment.lightGrpDes, listLightData); // add only 10 data to dbs
+					listLightData = new ArrayList<Coordinate>();
 				}
 				// the data being reset after that
 				readingLightValue = Double.parseDouble(Float.toString(value));
@@ -330,7 +331,7 @@ public class InternalSensorService extends Service implements
 		if (lastAddedAccData == null || lastAddedAccData.isEmpty()){
 			lastAddedAccData = dateOfMeasurement;
 		} else {
-			if (minutesDiff(lastAddedAccData, dateOfMeasurement,
+			if (timeDiff(lastAddedAccData, dateOfMeasurement,
 					timespan)) {
 				// after each min the added up data being divided by
 				// average and stored
@@ -365,12 +366,14 @@ public class InternalSensorService extends Service implements
 				double yValue = Math.sqrt(variance);  // standard Deviation
 				listAccData.add(new Coordinate(xValue, yValue));
 				
-				// store to dbs each 10 min (when size of list reach x0)
-				if (listAccData.size() % 10 == 0) //
+				// store to dbs each 10 min (when size of list reach 10)
+				if (listAccData.size() % 10 == 0){ //
 					addTrafficToDB(dateOfMeasurement,
-							GraphPlotFragment.motionGrpDes, listAccData,
-							listAccData.size() - 10);
-				// the data being reset after that
+							GraphPlotFragment.motionGrpDes, listAccData);
+					listAccData = new ArrayList<Coordinate>();
+				}
+				
+				// the data being reset after each min
 				accValues = new ArrayList<Double>();
 				
 				lastAddedAccData = dateOfMeasurement;
@@ -388,9 +391,10 @@ public class InternalSensorService extends Service implements
 	 * 
 	 * @param first
 	 * @param second
-	 * @return true if two dates are difference by ONE minute
+	 * @param timespan: the different of (e.g, ONE minute, ONE day...)
+	 * @return true if two dates are difference by time span
 	 */
-	public boolean minutesDiff(String firstDate, String secondDate,
+	public boolean timeDiff(String firstDate, String secondDate,
 			long timespan) {
 		SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
 
@@ -412,8 +416,9 @@ public class InternalSensorService extends Service implements
 
 	private LocalTransformationDBMS transformationDB;
 
+	private String currentDate;
 	public void addTrafficToDB(String timeOfMeasurement, String type,
-			ArrayList<Coordinate> listData, int fromPos) {
+			ArrayList<Coordinate> listData) {
 		String date = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
 
@@ -432,9 +437,21 @@ public class InternalSensorService extends Service implements
 		transformationDB = new LocalTransformationDBMS(
 				this.getApplicationContext());
 		transformationDB.open();
-		for (int i = fromPos; i < listData.size(); i++) {
+		// add to traffic table
+		for (int i = 0; i < listData.size(); i++) {
 			Coordinate d = listData.get(i);
 			transformationDB.addTraffic(date, type, d.getX(), d.getY());
+		}
+		// add to date table
+		if (currentDate.isEmpty()){
+			currentDate = timeOfMeasurement;
+			transformationDB.addDateOfTraffic(currentDate, 0);
+		} else {
+			if (timeDiff(currentDate, timeOfMeasurement, DateUtils.DAY_IN_MILLIS)){
+				// if currentDate is differ by one day, add it to date table
+				transformationDB.addDateOfTraffic(currentDate, 0);
+				currentDate = timeOfMeasurement;
+			}
 		}
 		transformationDB.close();
 	}

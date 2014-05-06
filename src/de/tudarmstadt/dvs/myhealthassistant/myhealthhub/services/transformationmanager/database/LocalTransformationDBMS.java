@@ -145,6 +145,17 @@ public class LocalTransformationDBMS {
 		return insertId != -1;
 	}
 
+	public boolean addDateOfTraffic(String date, int trafficId) {
+
+		ContentValues values = new ContentValues();
+		values.put(LocalTransformationDB.COLUMN_TRAFFIC_ID, trafficId);
+		values.put(LocalTransformationDB.COLUMN_DATE_TEXT, date);
+		long insertId = database.insert(
+				LocalTransformationDB.TABLE_DATE_TO_TRAFFIC, null, values);
+		Log.e(TAG, "insert at: " + insertId);
+		return insertId != -1;
+	}
+
 	public ArrayList<TrafficData> getAllTrafficFromDate(String date, String type) {
 		ArrayList<TrafficData> list = new ArrayList<TrafficData>();
 		String q = "SELECT * FROM "
@@ -153,7 +164,7 @@ public class LocalTransformationDBMS {
 				+ " where( " + LocalTransformationDB.COLUMN_DATE_TEXT
 				+ " like '" + date + "%' AND "
 				+ LocalTransformationDB.COLUMN_TYPE + " like '" + type + "%')"
-				+ " ORDER BY " + LocalTransformationDB.COLUMN_DATE_TEXT + ";";
+				+ " ORDER BY " + LocalTransformationDB.COLUMN_ID + ";";
 		Cursor cursor = database.rawQuery(q, null);
 		if (cursor.moveToFirst()) {
 			do {
@@ -174,16 +185,15 @@ public class LocalTransformationDBMS {
 	}
 	
 	public ArrayList<String> getAllAvalDate(){
-		//FIXME: search for date table only, not traffic table
 		ArrayList<String> list = new ArrayList<String>();
 		String q = "SELECT * FROM "
-				+ LocalTransformationDB.TABLE_TRAFFIC_MON
-				+ " ORDER BY " + LocalTransformationDB.COLUMN_DATE_TEXT + ";";
+				+ LocalTransformationDB.TABLE_DATE_TO_TRAFFIC
+				+ " ORDER BY " + LocalTransformationDB.COLUMN_DATE_ID + ";";
 		Cursor cursor = database.rawQuery(q, null);
 		if (cursor.moveToFirst()) {
 			do {
 				String date = cursor.getString(cursor
-								.getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT));
+								.getColumnIndex(LocalTransformationDB.COLUMN_ID));
 				if (!list.contains(date))
 						list.add(date);
 			} while (cursor.moveToNext());
@@ -196,6 +206,8 @@ public class LocalTransformationDBMS {
 		// drop and recreate table
 		database.execSQL("DROP TABLE IF EXISTS " + LocalTransformationDB.TABLE_TRAFFIC_MON);
 		database.execSQL(LocalTransformationDB.TRAFFIC_MON_CREATE);
+		database.execSQL("DROP TABLE IF EXISTS " + LocalTransformationDB.TABLE_DATE_TO_TRAFFIC);
+		database.execSQL(LocalTransformationDB.DATE_TO_TRAFFIC);
 	}
 	
 	public int deleteAllTrafficFromDate(String date) {

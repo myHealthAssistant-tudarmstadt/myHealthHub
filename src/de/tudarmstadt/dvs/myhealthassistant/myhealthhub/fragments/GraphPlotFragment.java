@@ -298,7 +298,7 @@ public class GraphPlotFragment extends Fragment {
 		// optional - legend
 		// graphView.setShowLegend(true);
 		graphView.getGraphViewStyle().setNumVerticalLabels(3);
-		graphView.getGraphViewStyle().setNumHorizontalLabels(5);
+		graphView.getGraphViewStyle().setNumHorizontalLabels(3);
 		graphView.getGraphViewStyle().setVerticalLabelsWidth(80);
 
 		LinearLayout layout = (LinearLayout) rootView.findViewById(Rid);

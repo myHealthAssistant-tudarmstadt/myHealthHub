@@ -83,6 +83,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 		Log.i(TAG, "creating database tabelle");
 		database.execSQL(DATABASE_CREATE);
 		database.execSQL(TRAFFIC_MON_CREATE);
+		database.execSQL(DATE_TO_TRAFFIC);
 	}
 
 	@Override
@@ -90,6 +91,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 		Log.w(TAG, "Upgrading database from version "+ oldVersion+ " to "+ newVersion);
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCAL_TRANSFORMATIONS);
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAFFIC_MON);
+		database.execSQL("DROP TABLE IF EXISTS " + DATE_TO_TRAFFIC);
 		onCreate(database);
 	}
 
