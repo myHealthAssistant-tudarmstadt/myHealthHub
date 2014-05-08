@@ -49,6 +49,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphPlotFragm
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigurationListFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SimpleEventsFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.WakeupAlarm;
 
 public class MyHealthHubWithFragments extends FragmentActivity implements
 		SensorConfigurationListFragment.OnTitleSelectedListener {
@@ -94,8 +95,12 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 		if (!pref.getBoolean("firstBoot", false)){
 			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_ACCELEROMETER, true).commit();
 			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_LIGHT, true).commit();
-			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
-			getApplicationContext().startService(intent);
+			
+//			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+//			getApplicationContext().startService(intent);
+			
+			WakeupAlarm wAlarm = new WakeupAlarm();
+			wAlarm.setAlarm(getApplicationContext());
 			
 			pref.edit().putBoolean("firstBoot", true).commit();
 		}

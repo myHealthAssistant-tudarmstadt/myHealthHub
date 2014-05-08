@@ -18,7 +18,12 @@
 
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -193,12 +198,30 @@ public class LocalTransformationDBMS {
 		if (cursor.moveToFirst()) {
 			do {
 				String date = cursor.getString(cursor
-								.getColumnIndex(LocalTransformationDB.COLUMN_ID));
+								.getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT));
 				if (!list.contains(date))
 						list.add(date);
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
+
+		Collections.sort(list, new Comparator<String>() {
+
+			@Override
+			public int compare(String arg0, String arg1) {
+				SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+				int compareResult = 0;
+				try {
+					Date arg0Date = format.parse(arg0);
+					Date arg1Date = format.parse(arg1);
+					compareResult = arg0Date.compareTo(arg1Date);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					compareResult = arg0.compareTo(arg1);
+				}
+				return compareResult;
+			}
+		});
 		return list;
 	}
 	

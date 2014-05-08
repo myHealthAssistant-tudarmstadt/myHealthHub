@@ -136,8 +136,6 @@ public class EditPreferences extends PreferenceActivity {
 
 			case DialogInterface.BUTTON_NEGATIVE:
 				checkboxPref.setChecked(false);
-				// cancel the alarm
-				wAlarm.cancelAlarm(context);
 				dialog.dismiss();
 				break;
 			}

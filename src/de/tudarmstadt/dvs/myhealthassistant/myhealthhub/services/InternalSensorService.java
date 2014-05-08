@@ -73,8 +73,6 @@ public class InternalSensorService extends Service implements
 		listLightData = new ArrayList<Coordinate>();
 
 		lastAddedAccData = "";
-		readingAccValue = 0.0d;
-		accDataCounter = 1;
 		listAccData = new ArrayList<Coordinate>();
 		accValues = new ArrayList<Double>();
 
@@ -97,62 +95,6 @@ public class InternalSensorService extends Service implements
 		}
 
 	}
-
-	// @Override
-	// public int onStartCommand(Intent intent, int flags, int startId) {
-	// // The service is starting, due to a call to startService()
-	//
-	// // A client wants to listen to a Sensor Type
-	// if (intent == null)
-	// return -1;
-	// Bundle extras = intent.getExtras();
-	// if (extras != null)
-	// if (extras.containsKey(InternalSensorListAdapter.PREF_SENSOR_TYPE)) {
-	// mSensorManager = (SensorManager)
-	// getSystemService(Context.SENSOR_SERVICE);
-	//
-	// int mSensorType = extras
-	// .getInt(InternalSensorListAdapter.PREF_SENSOR_TYPE);
-	//
-	// Sensor mSensor = mSensorManager.getDefaultSensor(mSensorType);
-	// mSensorManager.registerListener(this, mSensor,
-	// SensorManager.SENSOR_DELAY_NORMAL);
-	//
-	// // Notice User about this
-	// systemNotice();
-	// } else
-	// Log.e(TAG, "contains no extra SensorType");
-	//
-	// return 0;
-	// }
-	//
-	// private int systemNotice() {
-	// int t = START_STICKY;
-	// Log.e(TAG, "call me redundant BABY!  onStartCommand service");
-	//
-	// int myID = android.os.Process.myPid();
-	// // The intent to launch when the user clicks the expanded notification
-	// Intent intent = new Intent(this, MyHealthHubWithFragments.class);
-	// // Intent intent = new Intent();
-	// intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-	// | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-	// PendingIntent pendIntent = PendingIntent
-	// .getActivity(this, 0, intent, 0);
-	//
-	// Notification notice = new Notification.Builder(getApplicationContext())
-	// .setSmallIcon(R.drawable.ic_launcher)
-	// .setWhen(System.currentTimeMillis())
-	// .setContentTitle(getPackageName())
-	// .setContentText("Start advertising events")
-	// .setContentIntent(pendIntent).getNotification();
-	//
-	// notice.flags |= Notification.FLAG_AUTO_CANCEL;
-	// NotificationManager mNotificationManager = (NotificationManager)
-	// getSystemService(Context.NOTIFICATION_SERVICE);
-	// mNotificationManager.notify(myID, notice);
-	//
-	// return t;
-	// }
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -191,16 +133,6 @@ public class InternalSensorService extends Service implements
 		// The service is no longer used and is being destroyed
 		// stopForeground(true);
 
-		if (pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
-				+ Sensor.TYPE_ACCELEROMETER, false)
-				|| pref.getBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE
-						+ Sensor.TYPE_LIGHT, false)) {
-			// in case of this service being destroyed without user's settings
-			// try to set up an alarm to resurrect this after 5min
-			WakeupAlarm wAlarm = new WakeupAlarm();
-			wAlarm.setOnceTimeAlarm(this.getApplicationContext());
-		}
-
 		super.onDestroy();
 	}
 
@@ -232,7 +164,7 @@ public class InternalSensorService extends Service implements
 					y, z, x, y, z);
 
 			sendToChannel(accEvt, AbstractChannel.RECEIVER);
-			gotAccEvent(getTimestamp(), getCurrentTime(), x, y, z);
+			gotAccEvent(getTimestamp(), x, y, z);
 		}
 
 		else if (mSensorType == Sensor.TYPE_LIGHT
@@ -249,7 +181,7 @@ public class InternalSensorService extends Service implements
 					SensorReadingEvent.AMBIENT_LIGHT, getTimestamp(),
 					"location", "object", x, AmbientLightEvent.UNIT_LUX);
 			sendToChannel(lightEvnt, AbstractChannel.RECEIVER);
-			gotLightEvent(getTimestamp(), getCurrentTime(), x);
+			gotLightEvent(getTimestamp(), x);
 
 		}
 
@@ -279,21 +211,27 @@ public class InternalSensorService extends Service implements
 	private ArrayList<Coordinate> listLightData;
 
 	private static String lastAddedAccData = "";
-	private double readingAccValue;
-	private int accDataCounter;
 	private ArrayList<Coordinate> listAccData = new ArrayList<Coordinate>();
 
-	private static double getCurrentTime() {
-		SimpleDateFormat sdfDate = new SimpleDateFormat("hh.mm");
-		Date now = new Date();
-		String strDate = sdfDate.format(now);
-		return Double.parseDouble(strDate);
+	private static double getCurrentTimeInDouble(String fullTime) {
+		SimpleDateFormat fullDate = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
+		SimpleDateFormat timeDate = new SimpleDateFormat("kk.mm");
+
+		try {
+			Date now = fullDate.parse(fullTime);
+			String strDate = timeDate.format(now);
+
+			return Double.parseDouble(strDate);
+
+		} catch (ParseException e) {
+			Log.e(TAG, e.toString());
+			e.printStackTrace();
+		}
+		
+		return Double.parseDouble("00.00");
 	}
 
-
-	private ArrayList<Double> lightValues = new ArrayList<Double>();
-	private void gotLightEvent(String dateOfMeasurement, double timeOfMes,
-			float value) {
+	private void gotLightEvent(String dateOfMeasurement, float value) {
 		if (lastAddedLightData == null || lastAddedLightData.isEmpty())
 			lastAddedLightData = dateOfMeasurement;
 		else {
@@ -302,7 +240,8 @@ public class InternalSensorService extends Service implements
 				// after each min the added up data being divided by
 				// average and stored
 				double yValue = readingLightValue / lightDataCounter;
-				double xValue = timeOfMes;
+				double xValue = getCurrentTimeInDouble(dateOfMeasurement);
+				
 				listLightData.add(new Coordinate(xValue, yValue));
 
 				// store to dbs each 10 min (when size of list reach xxx0)
@@ -326,31 +265,15 @@ public class InternalSensorService extends Service implements
 	}
 
 	private ArrayList<Double> accValues = new ArrayList<Double>();
-	private void gotAccEvent(String dateOfMeasurement, double timeOfMes, int x,
+	private void gotAccEvent(String dateOfMeasurement, int x,
 			int y, int z) {
 		if (lastAddedAccData == null || lastAddedAccData.isEmpty()){
 			lastAddedAccData = dateOfMeasurement;
 		} else {
 			if (timeDiff(lastAddedAccData, dateOfMeasurement,
 					timespan)) {
-				// after each min the added up data being divided by
-				// average and stored
-//				double yValue = readingAccValue / accDataCounter;
-//				double xValue = timeOfMes;
-//				listAccData.add(new Coordinate(xValue, yValue));
-//
-//				// store to dbs each 10 min (when size of list reach x0)
-//				if (listAccData.size() % 10 == 0) //
-//					addTrafficToDB(dateOfMeasurement,
-//							GraphPlotFragment.motionGrpDes, listAccData,
-//							listAccData.size() - 10);//
-//
-//				// the data being reset after that
-//				readingAccValue = Math.sqrt(x * x + y * y + z * z); // Euclidean
-//				// length
-//				accDataCounter = 1;
 
-				double xValue = timeOfMes;
+				double xValue = getCurrentTimeInDouble(dateOfMeasurement);
 				double mean = 0.0d;
 				double variance = 0.0d;
 				int n = accValues.size();
@@ -363,7 +286,8 @@ public class InternalSensorService extends Service implements
 				}
 				variance = variance/n;
 				
-				double yValue = Math.sqrt(variance);  // standard Deviation
+				double yValue = variance;
+//				double yValue = Math.sqrt(variance);  // standard Deviation
 				listAccData.add(new Coordinate(xValue, yValue));
 				
 				// store to dbs each 10 min (when size of list reach 10)
@@ -381,7 +305,6 @@ public class InternalSensorService extends Service implements
 				// within a minute value being added up only
 //				readingAccValue += Math.sqrt(x * x + y * y + z * z);
 				accValues.add(Math.sqrt(x * x + y * y + z * z));
-				accDataCounter++;
 			}
 		}
 	}
@@ -416,7 +339,7 @@ public class InternalSensorService extends Service implements
 
 	private LocalTransformationDBMS transformationDB;
 
-	private String currentDate;
+	private String currentDate = "";
 	public void addTrafficToDB(String timeOfMeasurement, String type,
 			ArrayList<Coordinate> listData) {
 		String date = "";
@@ -434,8 +357,7 @@ public class InternalSensorService extends Service implements
 		}
 
 		Log.e(TAG, timeOfMeasurement + "-date=" + date + " type:" + type);
-		transformationDB = new LocalTransformationDBMS(
-				this.getApplicationContext());
+		transformationDB = new LocalTransformationDBMS(this.getApplicationContext());
 		transformationDB.open();
 		// add to traffic table
 		for (int i = 0; i < listData.size(); i++) {
@@ -445,11 +367,19 @@ public class InternalSensorService extends Service implements
 		// add to date table
 		if (currentDate.isEmpty()){
 			currentDate = timeOfMeasurement;
-			transformationDB.addDateOfTraffic(currentDate, 0);
+			transformationDB.addDateOfTraffic(date, 0);
 		} else {
 			if (timeDiff(currentDate, timeOfMeasurement, DateUtils.DAY_IN_MILLIS)){
-				// if currentDate is differ by one day, add it to date table
-				transformationDB.addDateOfTraffic(currentDate, 0);
+				// if currentDate is differ by one day, format and add it to date table
+				try {
+					Date today = sdf.parse(currentDate);
+					sdf.applyPattern("dd-MM-yyyy");
+					String newDate = sdf.format(today);
+					transformationDB.addDateOfTraffic(newDate, 0);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					Log.e(TAG, e.toString());
+				}
 				currentDate = timeOfMeasurement;
 			}
 		}

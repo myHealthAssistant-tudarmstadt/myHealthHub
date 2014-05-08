@@ -142,7 +142,7 @@ public class SystemMonitor extends Service {
 		// scheduleNextUpdate();
 
 		// Notify user of this service
-		systemNotice();
+//		systemNotice();
 
 		this.stopSelf();
 

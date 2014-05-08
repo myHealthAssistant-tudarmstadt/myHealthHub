@@ -112,6 +112,7 @@ public class GraphPlotBigActivity extends Activity {
 
 	}
 
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// ignore any keyboard or orientation changes.
@@ -130,37 +131,18 @@ public class GraphPlotBigActivity extends Activity {
 
 	private void dateBackAndForth(boolean back) {
 		TextView atDate = (TextView) findViewById(R.id.at_date);
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
-		try {
-			Date today = sdf.parse(atDate.getText().toString());
-//			Calendar cal = Calendar.getInstance();
-//			cal.setTime(today);
-//
-//			if (back) {
-//				cal.add(Calendar.DATE, -1);
-//			} else {
-//				cal.add(Calendar.DATE, 1);
-//			}
-//
-//			String newDate = sdf.format(cal.getTime());
-			
-			String newDate = sdf.format(today);
-			if (back){
-				newDate = getDate(-1);
-			} else {
-				newDate = getDate(1);
-			}
-
-			data_light = updateTrafficOnDate(newDate, lightGrpDes);
-			data_acc = updateTrafficOnDate(newDate, motionGrpDes);
-			redrawCharts();
-			atDate.setText(newDate);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-			Log.e(TAG, e.toString());
+		String newDate = atDate.getText().toString();
+		if (back) {
+			newDate = getDate(-1, atDate.getText().toString());
+		} else {
+			newDate = getDate(1, atDate.getText().toString());
 		}
+
+		Log.e(TAG, "newDate: " + newDate); // FIXME
+		data_light = updateTrafficOnDate(newDate, lightGrpDes);
+		data_acc = updateTrafficOnDate(newDate, motionGrpDes);
+		redrawCharts();
+		atDate.setText(newDate);
 
 	}
 
@@ -197,10 +179,14 @@ public class GraphPlotBigActivity extends Activity {
 
 		if (title.equals(lightGrpDes)) {
 			createGraph(lightGrpDes, gvs_series, R.id.light_graph, !barType, 0);
+			
+			
 			data_light = new ArrayList<GraphView.GraphViewData>();
 		}
 		if (title.equals(motionGrpDes)) {
 			createGraph(motionGrpDes, gvs_series, R.id.motion_graph, barType, 0);
+			
+			
 			data_acc = new ArrayList<GraphView.GraphViewData>();
 		}
 	}
@@ -213,7 +199,7 @@ public class GraphPlotBigActivity extends Activity {
 				dataList[i] = data_light.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-			createGraph(lightGrpDes, gvs_light, R.id.light_graph, !barType,
+				createGraph(lightGrpDes, gvs_light, R.id.light_graph, !barType,
 					dataList.length);
 		} else {
 			clearChart(lightGrpDes);
@@ -230,19 +216,30 @@ public class GraphPlotBigActivity extends Activity {
 			clearChart(motionGrpDes);
 		}
 	}
-
-	private void createGraph(String graphTitle, GraphViewSeries series,
+	
+	private GraphView createGraph(String graphTitle, GraphViewSeries series,
 			int Rid, boolean isBarChart, int seriesSize) {
+		
+		Log.e(TAG, "create graph:" + graphTitle);
 		GraphView graphView = null;
 
 		if (isBarChart) {
 			graphView = new BarGraphView(this.getApplicationContext(),
 					graphTitle);
+			((BarGraphView) graphView).setDrawValuesOnTop(false);
+//			syncGraphViewList.set(0, graphView);
 //			 graphView.setManualYAxisBounds(3.0d, 0.000d);
-		} else
+		} else {
 			graphView = new LineGraphView(this.getApplicationContext(),
 					graphTitle);
-
+			((LineGraphView) graphView).setDrawDataPoints(false);
+//			syncGraphViewList.set(1, graphView);
+//			if(syncGraphViewList.size() > 1){
+//				((LineGraphView) graphView).setSyncGraph(syncGraphViewList.get(0));
+//				
+//			}
+		}
+		
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			@Override
 			public String formatLabel(double value, boolean isValueX) {
@@ -278,7 +275,7 @@ public class GraphPlotBigActivity extends Activity {
 		// graphView.setShowLegend(true);
 //		graphView.getGraphViewStyle().setNumVerticalLabels(3);
 		graphView.getGraphViewStyle().setVerticalLabelsWidth(100);
-		 graphView.getGraphViewStyle().setNumHorizontalLabels(5);
+		graphView.getGraphViewStyle().setNumHorizontalLabels(5);
 
 		// graphView.getGraphViewStyle().setNumVerticalLabels(7);
 		// graphView.setManualYAxisBounds(300.0d, 0.0d);
@@ -303,14 +300,7 @@ public class GraphPlotBigActivity extends Activity {
 		layout.removeAllViews();
 		layout.addView(graphView);
 		
-		layout.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				Log.e(TAG, "this graph move:" + event.toString());
-				return false;
-			}
-		});
+		return graphView;
 	}
 
 	private ArrayList<String> avalDate;
@@ -319,7 +309,7 @@ public class GraphPlotBigActivity extends Activity {
 	 * @param i 0, 1 or -1
 	 * @return current, next or prev date
 	 */
-	private String getDate(int i){
+	private String getDate(int i, String currentDate){
 		avalDate = new ArrayList<String>();
 		this.transformationDB = new LocalTransformationDBMS(this
 				.getApplicationContext());
@@ -328,10 +318,6 @@ public class GraphPlotBigActivity extends Activity {
 		transformationDB.close();
 		if (avalDate.isEmpty())
 			avalDate.add(getCurrentDate());
-
-		Log.e(TAG, "aval dates:" + avalDate.toString());
-		TextView atDate = (TextView) findViewById(R.id.at_date);
-		String currentDate = atDate.getText().toString();
 
 		int x = avalDate.indexOf(currentDate);
 		if (x >= 0) {

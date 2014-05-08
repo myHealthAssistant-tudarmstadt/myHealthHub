@@ -180,39 +180,18 @@ public class GraphPlotFragment extends Fragment {
 
 	private void dateBackAndForth(boolean back) {
 		TextView atDate = (TextView) rootView.findViewById(R.id.at_date);
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
-		try {
-			Date today = sdf.parse(atDate.getText().toString());
-			// Calendar cal = Calendar.getInstance();
-			// cal.setTime(today);
-			//
-			// if (back) {
-			// cal.add(Calendar.DATE, -1);
-			// } else {
-			// cal.add(Calendar.DATE, 1);
-			// }
-			//
-			// String newDate = sdf.format(cal.getTime());
-
-			String newDate = sdf.format(today);
-			if (back) {
-				newDate = getDate(-1);
-			} else {
-				newDate = getDate(1);
-			}
-
-			Log.e(TAG, "newDate: " + newDate); // FIXME
-			data_light = updateTrafficOnDate(newDate, lightGrpDes);
-			data_acc = updateTrafficOnDate(newDate, motionGrpDes);
-			redrawCharts();
-			atDate.setText(newDate);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-			Log.e(TAG, e.toString());
+		String newDate = atDate.getText().toString();
+		if (back) {
+			newDate = getDate(-1, atDate.getText().toString());
+		} else {
+			newDate = getDate(1, atDate.getText().toString());
 		}
 
+		Log.e(TAG, "newDate: " + newDate); // FIXME
+		data_light = updateTrafficOnDate(newDate, lightGrpDes);
+		data_acc = updateTrafficOnDate(newDate, motionGrpDes);
+		redrawCharts();
+		atDate.setText(newDate);
 	}
 
 	private LocalTransformationDBMS transformationDB;
@@ -357,7 +336,7 @@ public class GraphPlotFragment extends Fragment {
 	 *            0, 1 or -1
 	 * @return current, next or prev date
 	 */
-	private String getDate(int i) {
+	private String getDate(int i, String currentDate) {
 		avalDate = new ArrayList<String>();
 		this.transformationDB = new LocalTransformationDBMS(getActivity()
 				.getApplicationContext());
@@ -366,9 +345,6 @@ public class GraphPlotFragment extends Fragment {
 		transformationDB.close();
 		if (avalDate.isEmpty())
 			avalDate.add(getCurrentDate());
-
-		TextView atDate = (TextView) rootView.findViewById(R.id.at_date);
-		String currentDate = atDate.getText().toString();
 
 		int x = avalDate.indexOf(currentDate);
 		if (x >= 0) {
