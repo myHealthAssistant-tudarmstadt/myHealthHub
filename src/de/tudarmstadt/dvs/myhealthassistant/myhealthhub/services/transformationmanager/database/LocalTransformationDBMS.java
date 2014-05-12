@@ -136,7 +136,7 @@ public class LocalTransformationDBMS {
 				new String[] { name + "" });
 	}
 
-	public boolean addTraffic(String date, String trafficType, double xValue,
+	public boolean addTraffic(String date, int trafficType, double xValue,
 			double yValue) {
 
 		ContentValues values = new ContentValues();
@@ -146,7 +146,9 @@ public class LocalTransformationDBMS {
 		values.put(LocalTransformationDB.COLUMN_Y_AXIS, yValue);
 		long insertId = database.insert(
 				LocalTransformationDB.TABLE_TRAFFIC_MON, null, values);
-		Log.e(TAG, "insert at: " + insertId);
+		if (insertId == -1){
+			Log.e(TAG, "addTraffic failed at:[" + date + "; type:" + trafficType + "; " + xValue + "; " + yValue + "]");
+		}
 		return insertId != -1;
 	}
 
@@ -157,18 +159,20 @@ public class LocalTransformationDBMS {
 		values.put(LocalTransformationDB.COLUMN_DATE_TEXT, date);
 		long insertId = database.insert(
 				LocalTransformationDB.TABLE_DATE_TO_TRAFFIC, null, values);
-		Log.e(TAG, "insert at: " + insertId);
+		if (insertId == -1){
+			Log.e(TAG, "addTraffic failed at:[" + date + "]");
+		}
 		return insertId != -1;
 	}
 
-	public ArrayList<TrafficData> getAllTrafficFromDate(String date, String type) {
+	public ArrayList<TrafficData> getAllTrafficFromDate(String date, int typeID) {
 		ArrayList<TrafficData> list = new ArrayList<TrafficData>();
 		String q = "SELECT * FROM "
 				+ LocalTransformationDB.TABLE_TRAFFIC_MON
 				// + ";";
 				+ " where( " + LocalTransformationDB.COLUMN_DATE_TEXT
 				+ " like '" + date + "%' AND "
-				+ LocalTransformationDB.COLUMN_TYPE + " like '" + type + "%')"
+				+ LocalTransformationDB.COLUMN_TYPE + " = " + typeID + ")"
 				+ " ORDER BY " + LocalTransformationDB.COLUMN_ID + ";";
 		Cursor cursor = database.rawQuery(q, null);
 		if (cursor.moveToFirst()) {
@@ -176,7 +180,7 @@ public class LocalTransformationDBMS {
 				TrafficData trafficData = new TrafficData(
 						cursor.getString(cursor
 								.getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT)),
-						cursor.getString(cursor
+						cursor.getInt(cursor
 								.getColumnIndex(LocalTransformationDB.COLUMN_TYPE)),
 						cursor.getDouble(cursor
 								.getColumnIndex(LocalTransformationDB.COLUMN_X_AXIS)),
@@ -222,6 +226,10 @@ public class LocalTransformationDBMS {
 				return compareResult;
 			}
 		});
+		
+		for (String s : list){
+			Log.e(TAG, "AvalDate:" + s);
+		}
 		return list;
 	}
 	
@@ -234,31 +242,11 @@ public class LocalTransformationDBMS {
 	}
 	
 	public int deleteAllTrafficFromDate(String date) {
+		database.delete(LocalTransformationDB.TABLE_DATE_TO_TRAFFIC,
+				LocalTransformationDB.COLUMN_DATE_TEXT + " like '" + date
+						+ "%'", null);
 		return database.delete(LocalTransformationDB.TABLE_TRAFFIC_MON,
 				LocalTransformationDB.COLUMN_DATE_TEXT + " like '" + date
 						+ "%'", null);
-		
-		// ArrayList<TrafficData> list = new ArrayList<TrafficData>();
-		// String q = "DELETE * FROM " + LocalTransformationDB.TABLE_TRAFFIC_MON
-		// // + ";";
-		// + " where( " + LocalTransformationDB.COLUMN_DATE_TEXT
-		// + " like '" + date + "%')" + ";";
-		// Cursor cursor = database.rawQuery(q, null);
-		// if (cursor.moveToFirst()) {
-		// do {
-		// TrafficData trafficData = new TrafficData(
-		// cursor.getString(cursor
-		// .getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT)),
-		// cursor.getString(cursor
-		// .getColumnIndex(LocalTransformationDB.COLUMN_TYPE)),
-		// cursor.getDouble(cursor
-		// .getColumnIndex(LocalTransformationDB.COLUMN_X_AXIS)),
-		// cursor.getDouble(cursor
-		// .getColumnIndex(LocalTransformationDB.COLUMN_Y_AXIS)));
-		// list.add(trafficData);
-		// } while (cursor.moveToNext());
-		// }
-		// cursor.close();
-		// return list;
 	}
 }

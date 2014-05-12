@@ -3,12 +3,12 @@ package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformation
 public class TrafficData {
 	
 	private String trafficDate;
-	private String trafficType;
+	private int trafficType;
 	private double xValue;
 	private double yValue;
 	
 	
-	public TrafficData(String trafficDate, String trafficType, double xValue,
+	public TrafficData(String trafficDate, int trafficType, double xValue,
 			double yValue) {
 		this.trafficDate = trafficDate;
 		this.trafficType = trafficType;
@@ -21,10 +21,10 @@ public class TrafficData {
 	public void setTrafficDate(String trafficDate) {
 		this.trafficDate = trafficDate;
 	}
-	public String getTrafficType() {
+	public int getTrafficType() {
 		return trafficType;
 	}
-	public void setTrafficType(String trafficType) {
+	public void setTrafficType(int trafficType) {
 		this.trafficType = trafficType;
 	}
 	public double getxValue() {
@@ -38,5 +38,10 @@ public class TrafficData {
 	}
 	public void setyValue(double yValue) {
 		this.yValue = yValue;
+	}
+	
+	@Override
+	public String toString(){
+		return "[" + trafficDate + "; " + trafficType + "; " + xValue + "; " + yValue + "]" ;
 	}
 }

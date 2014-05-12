@@ -1,0 +1,61 @@
+<!--
+	Copyright (C) 2014 TU Darmstadt, Hessen, Germany.
+	Department of Computer Science Databases and Distributed Systems
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/in_acc"
+        android:title="@string/in_acc" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/in_lig"
+        android:title="@string/in_lig" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_tem"
+        android:title="@string/in_tem" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_grav"
+        android:title="@string/in_grav" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_gyrs"
+        android:title="@string/in_gyrs" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_lin_acc"
+        android:title="@string/in_lin_acc" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_mag"
+        android:title="@string/in_mag" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_hum"
+        android:title="@string/in_hum" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_pres"
+        android:title="@string/in_pres" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/in_prox"
+        android:title="@string/in_prox" />
+
+</PreferenceScreen>

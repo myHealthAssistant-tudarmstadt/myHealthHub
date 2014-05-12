@@ -64,7 +64,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 			+ TABLE_TRAFFIC_MON + " (" + 
 			COLUMN_ID +	" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
 			COLUMN_DATE_TEXT+ " TEXT, " +
-			COLUMN_TYPE+ " TEXT, " +
+			COLUMN_TYPE+ " INTEGER, " +
 			COLUMN_X_AXIS+	" REAL, " + 
 			COLUMN_Y_AXIS+	" REAL);";
 	

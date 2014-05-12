@@ -50,8 +50,10 @@ public abstract class SensorReadingEvent extends Event {
 	/** .environmental.raw */
 	public static String ENVIRONMENTAL_RAW = ENVIRONMENTAL+".Raw";
 	public static String AMBIENT_LIGHT = ENVIRONMENTAL_RAW+".AmbientLight";
+	public static String AMBIENT_PRESSURE = ENVIRONMENTAL_RAW+".AmbientPressure";
 	public static String BALL_IN_TUBE = ENVIRONMENTAL_RAW+".BallInTube";
 	public static String HUMIDITY = ENVIRONMENTAL_RAW+".Humidity";
+	public static String PROXIMITY = ENVIRONMENTAL_RAW+".Proximity";
 	public static String PASSIVE_INFRARED = ENVIRONMENTAL_RAW+".PassiveInfrared";
 	public static String REED_SWITCH = ENVIRONMENTAL_RAW+".ReedSwitch";
 	public static String ROOM_TEMPERATURE = ENVIRONMENTAL_RAW+".RoomTemperature";
@@ -70,6 +72,7 @@ public abstract class SensorReadingEvent extends Event {
 	public static String COUNT_ACCELEROMETER_WRIST = COUNT_ACCELEROMETER+".Wrist";
 	public static String COUNT_ACCELEROMETER_CHEST = COUNT_ACCELEROMETER+".Chest";
 	public static String GYROSCOPE = INERTIAL+".Gyroscope";
+	public static String MAGNETIC_FIELD = INERTIAL+".MagneticField";
 	
 	public static String WEIGHT = PHYSICAL+".Weight";
 	public static String WEIGHT_IN_KG = WEIGHT+".Kg";

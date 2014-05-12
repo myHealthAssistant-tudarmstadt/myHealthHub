@@ -22,10 +22,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.hardware.Sensor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -39,16 +36,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.EditPreferences;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.InternalSensorListActivity;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.InternalSensorPreference;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.ManageXMLFiles;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.PersonalActivity;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.activities.TransformationManagerActivity;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter.InternalSensorListAdapter;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.EventGeneratorFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.GraphPlotFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigurationListFragment;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SimpleEventsFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.WakeupAlarm;
 
 public class MyHealthHubWithFragments extends FragmentActivity implements
@@ -91,21 +85,20 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
 		// set up listener for internal sensor:
-		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		if (!pref.getBoolean("firstBoot", false)){
-			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_ACCELEROMETER, true).commit();
-			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_LIGHT, true).commit();
-			
-//			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
-//			getApplicationContext().startService(intent);
-			
-			WakeupAlarm wAlarm = new WakeupAlarm();
-			wAlarm.setAlarm(getApplicationContext());
-			
-			pref.edit().putBoolean("firstBoot", true).commit();
-		}
+//		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//		if (!pref.getBoolean("firstBoot", false)){
+//			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_ACCELEROMETER, true).commit();
+//			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_LIGHT, true).commit();
+//			
+////			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+////			getApplicationContext().startService(intent);
+//			pref.edit().putBoolean("firstBoot", true).commit();
+//
+//		}
 		
-
+		WakeupAlarm wAlarm = new WakeupAlarm();
+		wAlarm.setAlarm(getApplicationContext());
+			
 	}
 
 	/**
@@ -239,7 +232,7 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 			
 		case R.id.men_internal_sensor:
 			Intent in_sensor = new Intent(getApplicationContext(),
-					InternalSensorListActivity.class);
+					InternalSensorPreference.class);
 			startActivity(in_sensor);
 			return true;
 

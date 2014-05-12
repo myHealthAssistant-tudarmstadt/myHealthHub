@@ -30,6 +30,19 @@
         <item>@string/acc_debug</item>
     </string-array>
     
+    <string-array name="internal_sensor_config">
+        <item>@string/in_acc</item>
+        <item>@string/in_grav</item>
+        <item>@string/in_gyrs</item>
+        <item>@string/in_hum</item>
+        <item>@string/in_lig</item>
+        <item>@string/in_lin_acc</item>
+        <item>@string/in_mag</item>
+        <item>@string/in_pres</item>
+        <item>@string/in_prox</item>
+        <item>@string/in_tem</item>
+    </string-array>
+    
     <!-- ======================================================= -->
     <string-array name="type_pulse">
         <item>@string/key_polar</item>

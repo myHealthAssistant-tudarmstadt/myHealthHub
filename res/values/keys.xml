@@ -46,4 +46,17 @@
     <!-- specific sensor name key -->
     <string name="key_polar">Polar Bluetooth Heart Rate</string>
     <string name="key_debug">Bluetooth Debug Sensor</string>
+    
+    <!-- internal sensor type -->
+    <string name="in_acc">Accelerometer</string>
+    <string name="in_lig">Light</string>
+    <string name="in_tem">Ambient Temperature</string>
+    <string name="in_grav">Gravity</string>
+    <string name="in_gyrs">Gryroscope</string>
+    <string name="in_lin_acc">Linear Acc</string>
+    <string name="in_mag">Magnetic Field</string>
+    <string name="in_pres">Pressure</string>
+    <string name="in_prox">Proximity</string>
+    <string name="in_hum">Relative Humidity</string>
+    
 </resources>

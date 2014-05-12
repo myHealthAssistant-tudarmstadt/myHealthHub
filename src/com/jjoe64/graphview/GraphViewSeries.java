@@ -168,4 +168,13 @@ public class GraphViewSeries {
 			g.redrawAll();
 		}
 	}
+	
+	public int size(){
+		return values.length;
+	}
+	
+	public double getXMax(){
+		return values[values.length - 1].getX();
+		
+	}
 }

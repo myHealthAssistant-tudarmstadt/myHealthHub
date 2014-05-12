@@ -27,6 +27,7 @@
         <PreferenceScreen
             android:summary="Select sensor modules that are started with myHealthHub Service."
             android:title="Sensor Selection" >
+            
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="@string/pulse"

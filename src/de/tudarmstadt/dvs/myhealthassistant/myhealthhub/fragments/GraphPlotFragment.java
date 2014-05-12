@@ -21,10 +21,8 @@ package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments;
 import android.support.v4.app.Fragment;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import com.jjoe64.graphview.BarGraphView;
@@ -36,9 +34,11 @@ import com.jjoe64.graphview.LineGraphView;
 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.graphActivities.GraphPlotBigActivity;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.CookTraffic;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.TrafficData;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -105,9 +105,11 @@ public class GraphPlotFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				clearAllCharts();
-				clearDb(((TextView) rootView.findViewById(R.id.at_date))
-						.getText().toString());
+//				CookTraffic mCook = new CookTraffic(getActivity().getApplicationContext());
+//				mCook.cookUp();
+//				clearAllCharts();
+//				clearDb(((TextView) rootView.findViewById(R.id.at_date))
+//						.getText().toString());
 			}
 		});
 
@@ -133,8 +135,8 @@ public class GraphPlotFragment extends Fragment {
 			}
 		});
 
-		data_light = updateTrafficOnDate(getCurrentDate(), lightGrpDes);
-		data_acc = updateTrafficOnDate(getCurrentDate(), motionGrpDes);
+		data_light = updateTrafficOnDate(getCurrentDate(), Sensor.TYPE_LIGHT);
+		data_acc = updateTrafficOnDate(getCurrentDate(), Sensor.TYPE_ACCELEROMETER);
 		redrawCharts();
 
 		LinearLayout layout_light = (LinearLayout) rootView
@@ -188,8 +190,8 @@ public class GraphPlotFragment extends Fragment {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_light = updateTrafficOnDate(newDate, lightGrpDes);
-		data_acc = updateTrafficOnDate(newDate, motionGrpDes);
+		data_light = updateTrafficOnDate(newDate, Sensor.TYPE_LIGHT);
+		data_acc = updateTrafficOnDate(newDate, Sensor.TYPE_ACCELEROMETER);
 		redrawCharts();
 		atDate.setText(newDate);
 	}
@@ -197,7 +199,7 @@ public class GraphPlotFragment extends Fragment {
 	private LocalTransformationDBMS transformationDB;
 
 	private ArrayList<GraphView.GraphViewData> updateTrafficOnDate(String date,
-			String type) {
+			int type) {
 		// initialize database
 		Log.e(TAG, "date=" + date + " type:" + type);
 		this.transformationDB = new LocalTransformationDBMS(getActivity()
@@ -269,8 +271,6 @@ public class GraphPlotFragment extends Fragment {
 
 		// add data
 		graphView.addSeries(series);
-		// set view port, start=2, size=10
-		// graphView.setViewPort(2, 10);
 		graphView.setScrollable(false);
 		// optional - activate scaling / zooming
 		// graphView.setScalable(true);

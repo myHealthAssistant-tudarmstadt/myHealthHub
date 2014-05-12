@@ -19,6 +19,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationm
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.TrafficData;
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -106,8 +107,8 @@ public class GraphPlotBigActivity extends Activity {
 			}
 		});
 
-		data_light = updateTrafficOnDate(atDate.getText().toString(), lightGrpDes);
-		data_acc = updateTrafficOnDate(atDate.getText().toString(), motionGrpDes);
+		data_light = updateTrafficOnDate(atDate.getText().toString(), Sensor.TYPE_LIGHT);
+		data_acc = updateTrafficOnDate(atDate.getText().toString(), Sensor.TYPE_ACCELEROMETER);
 		redrawCharts();
 
 	}
@@ -139,8 +140,8 @@ public class GraphPlotBigActivity extends Activity {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_light = updateTrafficOnDate(newDate, lightGrpDes);
-		data_acc = updateTrafficOnDate(newDate, motionGrpDes);
+		data_light = updateTrafficOnDate(newDate, Sensor.TYPE_LIGHT);
+		data_acc = updateTrafficOnDate(newDate, Sensor.TYPE_ACCELEROMETER);
 		redrawCharts();
 		atDate.setText(newDate);
 
@@ -149,7 +150,7 @@ public class GraphPlotBigActivity extends Activity {
 	private LocalTransformationDBMS transformationDB;
 
 	private ArrayList<GraphView.GraphViewData> updateTrafficOnDate(String date,
-			String type) {
+			int type) {
 		// initialize database
 		Log.e(TAG, "date=" + date + " type:" + type);
 		this.transformationDB = new LocalTransformationDBMS(
@@ -266,7 +267,7 @@ public class GraphPlotBigActivity extends Activity {
 		// add data
 		graphView.addSeries(series);
 		// set view port, start=2, size=10
-//		graphView.setViewPort(1, 40);
+//		graphView.setViewPort(0, 23);
 		graphView.setScrollable(true);
 		// optional - activate scaling / zooming
 		 graphView.setScalable(true);
@@ -275,7 +276,7 @@ public class GraphPlotBigActivity extends Activity {
 		// graphView.setShowLegend(true);
 //		graphView.getGraphViewStyle().setNumVerticalLabels(3);
 		graphView.getGraphViewStyle().setVerticalLabelsWidth(100);
-		graphView.getGraphViewStyle().setNumHorizontalLabels(5);
+		graphView.getGraphViewStyle().setNumHorizontalLabels(7);
 
 		// graphView.getGraphViewStyle().setNumVerticalLabels(7);
 		// graphView.setManualYAxisBounds(300.0d, 0.0d);
