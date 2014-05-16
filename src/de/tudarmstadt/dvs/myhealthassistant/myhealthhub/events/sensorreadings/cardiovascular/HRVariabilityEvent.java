@@ -29,14 +29,14 @@ import android.os.Parcelable;
  * @author Ha (copied from HeartRateEvent.java)
  * 
  */
-public class HRFidelityEvent extends SensorReadingEvent {
+public class HRVariabilityEvent extends SensorReadingEvent {
 
-	public static String EVENT_TYPE = SensorReadingEvent.HR_FIDELITY;
+	public static String EVENT_TYPE = SensorReadingEvent.HR_VARIABILITY;
 
 	public int value;
 	public int batteryLevel;
 	public int beatCounter;
-	public int fidelityLevel;
+	public long hrvValue;
 
 	/**
 	 * Creates an acceleration event.
@@ -54,50 +54,50 @@ public class HRFidelityEvent extends SensorReadingEvent {
 	 * @param value
 	 *            Heart rate value.
 	 */
-	public HRFidelityEvent(String eventID, String timestamp, String producerID,
-			String sensorType, String timeOfMeasurement, int heartRateValue, int fidelityValue) {
+	public HRVariabilityEvent(String eventID, String timestamp, String producerID,
+			String sensorType, String timeOfMeasurement, int heartRateValue, long hrvValue) {
 		super(EVENT_TYPE, eventID, timestamp, producerID, sensorType,
 				timeOfMeasurement);
 
 		this.value = heartRateValue;
-		this.fidelityLevel = fidelityValue;
+		this.hrvValue = hrvValue;
 	}
 
-	public HRFidelityEvent(String eventID, String timestamp, String producerID,
+	public HRVariabilityEvent(String eventID, String timestamp, String producerID,
 			String sensorType, String timeOfMeasurement, int value,
-			int batteryLevel, int beatCounter, int fidelityValue) {
+			int batteryLevel, int beatCounter, int hrvValue) {
 		this(eventID, timestamp, producerID, sensorType, timeOfMeasurement,
-				value, fidelityValue);
+				value, hrvValue);
 
+		this.value = value;
 		this.batteryLevel = batteryLevel;
 		this.beatCounter = beatCounter;
-		this.fidelityLevel = fidelityValue;
-		this.value = value;
+		this.hrvValue = hrvValue;
 	}
 
 	public int getValue() {
 		return value;
 	}
 	
-	public int getFidelity() {
-		return fidelityLevel;
+	public long getHrV() {
+		return hrvValue;
 	}
 
-	public static final Parcelable.Creator<HRFidelityEvent> CREATOR = new Parcelable.Creator<HRFidelityEvent>() {
+	public static final Parcelable.Creator<HRVariabilityEvent> CREATOR = new Parcelable.Creator<HRVariabilityEvent>() {
 
 		@Override
-		public HRFidelityEvent createFromParcel(Parcel source) {
-			return new HRFidelityEvent(source);
+		public HRVariabilityEvent createFromParcel(Parcel source) {
+			return new HRVariabilityEvent(source);
 		}
 
 		@Override
-		public HRFidelityEvent[] newArray(int size) {
-			return new HRFidelityEvent[size];
+		public HRVariabilityEvent[] newArray(int size) {
+			return new HRVariabilityEvent[size];
 		}
 
 	};
 
-	private HRFidelityEvent(final Parcel source) {
+	private HRVariabilityEvent(final Parcel source) {
 		super(source.readString(), source.readString(), source.readString(),
 				source.readString(), source.readString(), source.readString());
 		readFromParcel(source);
@@ -114,14 +114,14 @@ public class HRFidelityEvent extends SensorReadingEvent {
 		dest.writeInt(value);
 		dest.writeInt(batteryLevel);
 		dest.writeInt(beatCounter);
-		dest.writeInt(fidelityLevel);
+		dest.writeLong(hrvValue);
 	}
 
 	public void readFromParcel(final Parcel source) {
 		value = source.readInt();
 		batteryLevel = source.readInt();
 		beatCounter = source.readInt();
-		fidelityLevel = source.readInt();
+		hrvValue = source.readLong();
 	}
 
 	@Override

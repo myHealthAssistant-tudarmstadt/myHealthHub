@@ -31,12 +31,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.widget.TextView;
@@ -105,9 +111,11 @@ public class EditPreferences extends PreferenceActivity {
 							return true;
 						}
 					});
+			
+			
 		}
 	}
-
+	
 	private void openPopupDialog(String title, String mess, DialogInterface.OnClickListener dialogClickListener) {
 		LayoutInflater layoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

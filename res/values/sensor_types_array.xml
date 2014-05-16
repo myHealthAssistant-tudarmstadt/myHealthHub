@@ -46,6 +46,7 @@
     <!-- ======================================================= -->
     <string-array name="type_pulse">
         <item>@string/key_polar</item>
+        <item>@string/key_zephyrHxM</item>
         <item>@string/dummy_empty</item>
     </string-array>
     

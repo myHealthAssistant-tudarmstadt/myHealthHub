@@ -29,6 +29,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.SensorReadingEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.AmbientLightEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.AmbientPressureEvent;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.HumidityEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.ProximityEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.TemperatureEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventKnee;
@@ -72,14 +73,6 @@ public class InternalSensorService extends Service implements
 	public void onCreate() {
 		// The service is being created
 		Log.e(TAG, "onCreate");
-		lastAddedLightData = "";
-		readingLightValue = 0.0d;
-		lightDataCounter = 1;
-		listLightData = new ArrayList<Coordinate>();
-
-		lastAddedAccData = "";
-		listAccData = new ArrayList<Coordinate>();
-		accValues = new ArrayList<Double>();
 
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		pref = PreferenceManager
@@ -97,22 +90,51 @@ public class InternalSensorService extends Service implements
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_pres), false)) {
-			Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_PRESSURE);
 			mSensorManager.registerListener(this, mSensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_prox), false)) {
-			Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 			mSensorManager.registerListener(this, mSensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_mag), false)) {
-			Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 			mSensorManager.registerListener(this, mSensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_gyrs), false)) {
-			Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_grav), false)) {
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_GRAVITY);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)) {
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_lin_acc),
+				false)) {
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+			mSensorManager.registerListener(this, mSensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_tem), false)) {
+			Sensor mSensor = mSensorManager
+					.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 			mSensorManager.registerListener(this, mSensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
@@ -147,6 +169,7 @@ public class InternalSensorService extends Service implements
 	@Override
 	public void onDestroy() {
 		Log.e(TAG, "onDestroy");
+
 		if (mSensorManager != null) {
 			// unregister all sensors
 			mSensorManager.unregisterListener(this);
@@ -173,87 +196,126 @@ public class InternalSensorService extends Service implements
 					.getDefaultSharedPreferences(getApplicationContext());
 
 		int mSensorType = event.sensor.getType();
-		if (pref.getBoolean(getResources().getString(R.string.in_acc), false)
-				|| pref.getBoolean(getResources().getString(R.string.in_lig),
-						false)) {
-			if (mSensorType == Sensor.TYPE_ACCELEROMETER) {
+		if (mSensorType == Sensor.TYPE_ACCELEROMETER) {
 
-				int x = Math.round(event.values[0]);
-				int y = Math.round(event.values[1]);
-				int z = Math.round(event.values[2]);
+			int x = Math.round(event.values[0]);
+			int y = Math.round(event.values[1]);
+			int z = Math.round(event.values[2]);
 
-				// using ACCELEROMETER_KNEE only as a demonstration,
-				// in practice new event can be created
-				AccSensorEventKnee accEvt = new AccSensorEventKnee("eventID",
-						getTimestamp(), "producerID",
-						SensorReadingEvent.ACCELEROMETER_KNEE, getTimestamp(),
-						x, y, z, x, y, z);
+			// using ACCELEROMETER_KNEE only as a demonstration,
+			// in practice new event can be created
+			AccSensorEventKnee accEvt = new AccSensorEventKnee("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.ACCELEROMETER_KNEE, getTimestamp(), x,
+					y, z, x, y, z);
 
-				sendToChannel(accEvt, AbstractChannel.RECEIVER); // for external
-																	// apps
-																	// subscription
-				gotAccEvent(getTimestamp(), x, y, z); // for internal graphViews
-														// using
-			}
-
-			else if (mSensorType == Sensor.TYPE_LIGHT) {
-
-				float x = event.values[0];
-
-				// using ambientLightEvent only as a demonstration,
-				// in practice new event can be created
-				AmbientLightEvent lightEvnt = new AmbientLightEvent("eventID",
-						getTimestamp(), "producerID",
-						SensorReadingEvent.AMBIENT_LIGHT, getTimestamp(),
-						"location", "object", x, AmbientLightEvent.UNIT_LUX);
-				sendToChannel(lightEvnt, AbstractChannel.RECEIVER);
-				gotLightEvent(getTimestamp(), x);
-
-			}
-
-			else if (mSensorType == Sensor.TYPE_PRESSURE) {
-				float x = event.values[0];
-				AmbientPressureEvent temEvnt = new AmbientPressureEvent(
-						"eventID", getTimestamp(), "producerID",
-						SensorReadingEvent.AMBIENT_PRESSURE, getTimestamp(),
-						"location", "object", x, TemperatureEvent.UNIT_CELSIUS);
-				sendToChannel(temEvnt, AbstractChannel.RECEIVER);
-			}
-			else if (mSensorType == Sensor.TYPE_PROXIMITY) {
-				float x = event.values[0];
-				ProximityEvent evnt = new ProximityEvent(
-						"eventID", getTimestamp(), "producerID",
-						SensorReadingEvent.PROXIMITY, getTimestamp(),
-						"location", "object", x, TemperatureEvent.UNIT_CELSIUS);
-				sendToChannel(evnt, AbstractChannel.RECEIVER);
-			}
-
-			else if (mSensorType == Sensor.TYPE_GYROSCOPE) {
-				int x = Math.round(event.values[0]);
-				int y = Math.round(event.values[1]);
-				int z = Math.round(event.values[2]);
-
-				GyroscopeSensorEvent gSEvnt = new GyroscopeSensorEvent("eventID",
-						getTimestamp(), "producerID",
-						SensorReadingEvent.GYROSCOPE, getTimestamp(),
-						x, y, z, x, y, z);
-				sendToChannel(gSEvnt, AbstractChannel.RECEIVER);
-
-			}
-
-			else if (mSensorType == Sensor.TYPE_MAGNETIC_FIELD) {
-				int x = Math.round(event.values[0]);
-				int y = Math.round(event.values[1]);
-				int z = Math.round(event.values[2]);
-
-				MagneticSensorEvent gSEvnt = new MagneticSensorEvent("eventID",
-						getTimestamp(), "producerID",
-						SensorReadingEvent.MAGNETIC_FIELD, getTimestamp(),
-						x, y, z, x, y, z);
-				sendToChannel(gSEvnt, AbstractChannel.RECEIVER);
-
-			}
+			sendToChannel(accEvt, AbstractChannel.RECEIVER); // for external
+																// apps
+																// subscription
+			gotAccEvent(getTimestamp(), Sensor.TYPE_ACCELEROMETER, x, y, z); // for
+																				// internal
+																				// graphViews
+			// using
 		}
+
+		else if (mSensorType == Sensor.TYPE_LIGHT) {
+
+			float x = event.values[0];
+
+			// using ambientLightEvent only as a demonstration,
+			// in practice new event can be created
+			AmbientLightEvent lightEvnt = new AmbientLightEvent("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.AMBIENT_LIGHT, getTimestamp(),
+					"location", "object", x, AmbientLightEvent.UNIT_LUX);
+			sendToChannel(lightEvnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), Sensor.TYPE_LIGHT, x);
+
+		}
+
+		else if (mSensorType == Sensor.TYPE_PRESSURE) {
+			float x = event.values[0];
+			AmbientPressureEvent temEvnt = new AmbientPressureEvent("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.AMBIENT_PRESSURE, getTimestamp(),
+					"location", "object", x, AmbientPressureEvent.UNIT_HPA);
+			sendToChannel(temEvnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), Sensor.TYPE_PRESSURE, x);
+		}
+
+		else if (mSensorType == Sensor.TYPE_PROXIMITY) {
+			float x = event.values[0];
+			ProximityEvent evnt = new ProximityEvent("eventID", getTimestamp(),
+					"producerID", SensorReadingEvent.PROXIMITY, getTimestamp(),
+					"location", "object", x, "");
+			sendToChannel(evnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), Sensor.TYPE_PROXIMITY, x);
+		}
+
+		else if (mSensorType == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+			float x = event.values[0];
+			TemperatureEvent evnt = new TemperatureEvent("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.ROOM_TEMPERATURE, getTimestamp(),
+					"location", "object", x, TemperatureEvent.UNIT_CELSIUS);
+			sendToChannel(evnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), Sensor.TYPE_AMBIENT_TEMPERATURE, x);
+		}
+
+		else if (mSensorType == Sensor.TYPE_RELATIVE_HUMIDITY) {
+			float x = event.values[0];
+			HumidityEvent evnt = new HumidityEvent("eventID", getTimestamp(),
+					"producerID", SensorReadingEvent.HUMIDITY, getTimestamp(),
+					"location", "object", x);
+			sendToChannel(evnt, AbstractChannel.RECEIVER);
+			gotLightEvent(getTimestamp(), Sensor.TYPE_RELATIVE_HUMIDITY, x);
+		}
+
+		else if (mSensorType == Sensor.TYPE_GYROSCOPE) {
+			
+			int x = Math.round(event.values[0]);
+			int y = Math.round(event.values[1]);
+			int z = Math.round(event.values[2]);
+
+			GyroscopeSensorEvent gSEvnt = new GyroscopeSensorEvent("eventID",
+					getTimestamp(), "producerID", SensorReadingEvent.GYROSCOPE,
+					getTimestamp(), x, y, z, x, y, z);
+			sendToChannel(gSEvnt, AbstractChannel.RECEIVER);
+			gotAccEvent(getTimestamp(), Sensor.TYPE_GYROSCOPE, x, y, z);
+
+		}
+
+		else if (mSensorType == Sensor.TYPE_MAGNETIC_FIELD) {
+			int x = Math.round(event.values[0]);
+			int y = Math.round(event.values[1]);
+			int z = Math.round(event.values[2]);
+
+			MagneticSensorEvent gSEvnt = new MagneticSensorEvent("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.MAGNETIC_FIELD, getTimestamp(), x, y, z,
+					x, y, z);
+			sendToChannel(gSEvnt, AbstractChannel.RECEIVER);
+			gotAccEvent(getTimestamp(), Sensor.TYPE_MAGNETIC_FIELD, x, y, z);
+
+		}
+
+		else if (mSensorType == Sensor.TYPE_LINEAR_ACCELERATION) {
+			int x = Math.round(event.values[0]);
+			int y = Math.round(event.values[1]);
+			int z = Math.round(event.values[2]);
+
+			// using ACCELEROMETER_KNEE only as a demonstration,
+			// in practice new event can be created
+			AccSensorEventKnee accEvt = new AccSensorEventKnee("eventID",
+					getTimestamp(), "producerID",
+					SensorReadingEvent.ACCELEROMETER, getTimestamp(), x, y, z,
+					x, y, z);
+
+			sendToChannel(accEvt, AbstractChannel.RECEIVER);
+			gotAccEvent(getTimestamp(), Sensor.TYPE_LINEAR_ACCELERATION, x, y,
+					z);
+		}
+
 	}
 
 	private String getTimestamp() {
@@ -276,29 +338,36 @@ public class InternalSensorService extends Service implements
 
 	private static final String dateFormat = "yyyy-MM-dd_kk:mm:ss";
 	private static String lastAddedLightData = "";
+	private ArrayList<Coordinate> listLightData;
 	private double readingLightValue;
 	private int lightDataCounter;
-	private ArrayList<Coordinate> listLightData;
 
-	private static String lastAddedAccData = "";
-	private ArrayList<Coordinate> listAccData = new ArrayList<Coordinate>();
-
-	private void gotLightEvent(String dateOfMeasurement, float value) {
-		if (lastAddedLightData == null || lastAddedLightData.isEmpty())
+	private void gotLightEvent(String dateOfMeasurement, int typeId, float value) {
+		if (lastAddedLightData == null || lastAddedLightData.isEmpty()) {
 			lastAddedLightData = dateOfMeasurement;
-		else {
+			listLightData = new ArrayList<Coordinate>();
+			readingLightValue = 0.0d;
+			lightDataCounter = 1;
+		} else {
 			if (timeDiff(lastAddedLightData, dateOfMeasurement, timespan)) {
 				// after each min the added up data being divided by
 				// average and stored
 				double yValue = readingLightValue / lightDataCounter;
 				String xValue = dateOfMeasurement;
 
+				if (listLightData == null)
+					listLightData = new ArrayList<Coordinate>();
+				
 				listLightData.add(new Coordinate(xValue, yValue));
 
 				// store to dbs each 10 min (when size of list reach xxx0)
 				if (listLightData.size() % 10 == 0) {
-					addTrafficToDB(dateOfMeasurement, Sensor.TYPE_LIGHT,
-							listLightData); // add only 10 data to dbs
+					addTrafficToDB(dateOfMeasurement, typeId, listLightData); // add
+																				// only
+																				// 10
+																				// data
+																				// to
+																				// dbs
 					listLightData = new ArrayList<Coordinate>();
 				}
 				// the data being reset after that
@@ -315,11 +384,16 @@ public class InternalSensorService extends Service implements
 		}
 	}
 
+	private static String lastAddedAccData = "";
 	private ArrayList<Double> accValues = new ArrayList<Double>();
+	private ArrayList<Coordinate> listAccData;
 
-	private void gotAccEvent(String dateOfMeasurement, int x, int y, int z) {
+	private void gotAccEvent(String dateOfMeasurement, int typeId, int x,
+			int y, int z) {
 		if (lastAddedAccData == null || lastAddedAccData.isEmpty()) {
 			lastAddedAccData = dateOfMeasurement;
+			listAccData = new ArrayList<Coordinate>();
+			accValues = new ArrayList<Double>();
 		} else {
 			if (timeDiff(lastAddedAccData, dateOfMeasurement, timespan)) {
 
@@ -338,12 +412,15 @@ public class InternalSensorService extends Service implements
 
 				double yValue = variance;
 				// double yValue = Math.sqrt(variance); // standard Deviation
+				
+				if (listAccData == null)
+					listAccData = new ArrayList<Coordinate>();
+				
 				listAccData.add(new Coordinate(xValue, yValue));
-
+				
 				// store to dbs each 10 min (when size of list reach 10)
 				if (listAccData.size() % 10 == 0) { //
-					addTrafficToDB(dateOfMeasurement,
-							Sensor.TYPE_ACCELEROMETER, listAccData);
+					addTrafficToDB(dateOfMeasurement, typeId, listAccData);
 					listAccData = new ArrayList<Coordinate>();
 				}
 
@@ -447,18 +524,16 @@ public class InternalSensorService extends Service implements
 		transformationDB.open();
 		ArrayList<String> databaseListData = transformationDB.getAllAvalDate();
 		// add to traffic table
+		Log.e(TAG, "Add traffic to table with type:" + typeID + "; "
+				+ timeOfMeasurement);
 		for (Coordinate d : listData) {
 			String date = getDayFromDate(d.getX(), dateFormat, "dd-MM-yyyy");
 			double xDouble = convertTimeToDouble(d.getX(), dateFormat, "kk.mm");
 			transformationDB.addTraffic(date, typeID, xDouble, d.getY());
-
-			Log.e(TAG,
-					"addTraffic: " + date + " -- " + xDouble + " - " + d.getY());
 			if (!databaseListData.contains(date) && !dateToAdd.contains(date)) {
 				dateToAdd.add(date);
 			}
 		}
-
 		for (String s : dateToAdd) {
 			transformationDB.addDateOfTraffic(s, -1);
 		}

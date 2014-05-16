@@ -90,6 +90,15 @@
                 android:layout_below="@id/light_graph"
                 android:orientation="horizontal" >
             </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/heartrate_graph"
+                android:layout_width="fill_parent"
+                android:layout_height="120dp"
+                android:layout_below="@id/light_graph"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

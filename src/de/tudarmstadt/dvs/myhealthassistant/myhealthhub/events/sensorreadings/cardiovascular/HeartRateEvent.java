@@ -69,6 +69,7 @@ public class HeartRateEvent extends SensorReadingEvent {
 
 		this.batteryLevel = batteryLevel;
 		this.beatCounter = beatCounter;
+		this.value = value;
 	}
 
 	public int getValue() {

@@ -21,11 +21,19 @@
  */
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.AbstractChannel;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.SensorReadingEvent;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.cardiovascular.HeartRateEvent;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 
 /**
  * @author Christian Seeger
@@ -117,5 +125,58 @@ public abstract class AbstractSensorModule {
 	 */
 	protected void sendSensorReading(Event evt) {
 		sendToChannel(evt, AbstractChannel.RECEIVER);
+		if (evt.getEventType().equals(SensorReadingEvent.HEART_RATE)){
+			Log.e("AbstractSensor", "this's heartrate event");
+			storeHeartRateEvent((HeartRateEvent) evt);
+		}
+	}
+	
+	private void storeHeartRateEvent(HeartRateEvent evt){
+		LocalTransformationDBMS db = new LocalTransformationDBMS(this.context);
+		db.open();
+		String timeStp = evt.getTimeOfMeasurement();
+		double yValue = evt.getValue();
+		double xValue = convertTimeToDouble(timeStp, "yyyy-MM-dd kk:mm:ss", "kk.mm");
+		String time = getDayFromDate(timeStp, "yyyy-MM-dd kk:mm:ss", "dd-MM-yyyy");
+		db.addTraffic(time, 999, xValue, yValue);
+		db.addDateOfTraffic(time, 0);
+		db.close();
+	}
+	
+
+	private String getDayFromDate(String timeOfMeasurement, String dateFormat,
+			String applyPattern) {
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+
+		try {
+			Date today = sdf.parse(timeOfMeasurement);
+			sdf.applyPattern(applyPattern);
+
+			return sdf.format(today);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	private static double convertTimeToDouble(String fullTime,
+			String dateFormat, String applyPattern) {
+		SimpleDateFormat fullDate = new SimpleDateFormat(dateFormat);
+		SimpleDateFormat timeDate = new SimpleDateFormat(applyPattern);
+
+		try {
+			Date now = fullDate.parse(fullTime);
+			String strDate = timeDate.format(now);
+			double parseDate = Double.parseDouble(strDate);
+			if (parseDate >= 24.00d)
+				return parseDate - 24;
+			return parseDate;
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return Double.parseDouble("00.00");
 	}
 }

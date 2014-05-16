@@ -40,11 +40,13 @@ public class GraphPlotBigActivity extends Activity {
 
 	private static boolean barType = true;
 
-	private ArrayList<GraphViewData> data_light;
-	private ArrayList<GraphViewData> data_acc;
+	private ArrayList<GraphViewData> data_line;
+	private ArrayList<GraphViewData> data_bar;
 
-	public static String lightGrpDes = "Light in lux/min";
-	public static String motionGrpDes = "Motion Strength/min";
+	public static String lineGrpTitle = "";
+	public static String barGrpTitle = "";
+	private int lineGrpType = -1;
+	private int barGrpType = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,8 +55,8 @@ public class GraphPlotBigActivity extends Activity {
 
 		Log.e(TAG, ": onCreateView");
 
-		data_light = new ArrayList<GraphViewData>();
-		data_acc = new ArrayList<GraphViewData>();
+		data_line = new ArrayList<GraphViewData>();
+		data_bar = new ArrayList<GraphViewData>();
 
 		CheckBox cBox = (CheckBox) findViewById(R.id.start_record);
 		cBox.setVisibility(View.GONE);
@@ -82,10 +84,24 @@ public class GraphPlotBigActivity extends Activity {
 		TextView atDate = (TextView) findViewById(R.id.at_date);
 		Bundle extras = this.getIntent().getExtras();
 		String time = getCurrentDate();
-		if (extras != null)
+		if (extras != null){
 			if (extras.containsKey("Timy")) {
 				time = extras.getString("Timy");
 			}
+			
+			if (extras.containsKey("lineGraphTitle"))
+				lineGrpTitle = extras.getString("lineGraphTitle");
+			
+			if (extras.containsKey("lineGraphType"))
+				lineGrpType = extras.getInt("lineGraphType");
+			
+			if (extras.containsKey("barGraphTitle"))
+				barGrpTitle = extras.getString("barGraphTitle");
+			
+			if (extras.containsKey("barGraphType"))
+				barGrpType = extras.getInt("barGraphType");
+		}
+		
 		atDate.setText(time);
 
 		Button backBtn = (Button) findViewById(R.id.date_back);
@@ -107,8 +123,8 @@ public class GraphPlotBigActivity extends Activity {
 			}
 		});
 
-		data_light = updateTrafficOnDate(atDate.getText().toString(), Sensor.TYPE_LIGHT);
-		data_acc = updateTrafficOnDate(atDate.getText().toString(), Sensor.TYPE_ACCELEROMETER);
+		data_line = updateTrafficOnDate(atDate.getText().toString(), lineGrpType);
+		data_bar = updateTrafficOnDate(atDate.getText().toString(), barGrpType);
 		redrawCharts();
 
 	}
@@ -140,8 +156,8 @@ public class GraphPlotBigActivity extends Activity {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_light = updateTrafficOnDate(newDate, Sensor.TYPE_LIGHT);
-		data_acc = updateTrafficOnDate(newDate, Sensor.TYPE_ACCELEROMETER);
+		data_line = updateTrafficOnDate(newDate, lineGrpType);
+		data_bar = updateTrafficOnDate(newDate, barGrpType);
 		redrawCharts();
 		atDate.setText(newDate);
 
@@ -169,8 +185,8 @@ public class GraphPlotBigActivity extends Activity {
 	}
 
 	private void clearAllCharts() {
-		clearChart(lightGrpDes);
-		clearChart(motionGrpDes);
+		clearChart(lineGrpTitle);
+		clearChart(barGrpTitle);
 	}
 
 	private void clearChart(String title) {
@@ -178,43 +194,43 @@ public class GraphPlotBigActivity extends Activity {
 		dataList[0] = new GraphViewData(0.0, 0.0);
 		GraphViewSeries gvs_series = new GraphViewSeries(dataList);
 
-		if (title.equals(lightGrpDes)) {
-			createGraph(lightGrpDes, gvs_series, R.id.light_graph, !barType, 0);
+		if (title.equals(lineGrpTitle)) {
+			createGraph(lineGrpTitle, gvs_series, R.id.light_graph, !barType, 0);
 			
 			
-			data_light = new ArrayList<GraphView.GraphViewData>();
+			data_line = new ArrayList<GraphView.GraphViewData>();
 		}
-		if (title.equals(motionGrpDes)) {
-			createGraph(motionGrpDes, gvs_series, R.id.motion_graph, barType, 0);
+		if (title.equals(barGrpTitle)) {
+			createGraph(barGrpTitle, gvs_series, R.id.motion_graph, barType, 0);
 			
 			
-			data_acc = new ArrayList<GraphView.GraphViewData>();
+			data_bar = new ArrayList<GraphView.GraphViewData>();
 		}
 	}
 
 	private void redrawCharts() {
-		if (data_light.size() > 0) {
+		if (data_line.size() > 0) {
 
-			GraphViewData[] dataList = new GraphViewData[data_light.size()];
-			for (int i = 0; i < data_light.size(); i++) {
-				dataList[i] = data_light.get(i);
+			GraphViewData[] dataList = new GraphViewData[data_line.size()];
+			for (int i = 0; i < data_line.size(); i++) {
+				dataList[i] = data_line.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-				createGraph(lightGrpDes, gvs_light, R.id.light_graph, !barType,
+				createGraph(lineGrpTitle, gvs_light, R.id.light_graph, !barType,
 					dataList.length);
 		} else {
-			clearChart(lightGrpDes);
+			clearChart(lineGrpTitle);
 		}
-		if (data_acc.size() > 0) {
-			GraphViewData[] dataAcc = new GraphViewData[data_acc.size()];
-			for (int i = 0; i < data_acc.size(); i++) {
-				dataAcc[i] = data_acc.get(i);
+		if (data_bar.size() > 0) {
+			GraphViewData[] dataAcc = new GraphViewData[data_bar.size()];
+			for (int i = 0; i < data_bar.size(); i++) {
+				dataAcc[i] = data_bar.get(i);
 			}
 			GraphViewSeries gvs_acc = new GraphViewSeries(dataAcc);
-			createGraph(motionGrpDes, gvs_acc, R.id.motion_graph, barType,
+			createGraph(barGrpTitle, gvs_acc, R.id.motion_graph, barType,
 					dataAcc.length);
 		} else {
-			clearChart(motionGrpDes);
+			clearChart(barGrpTitle);
 		}
 	}
 	

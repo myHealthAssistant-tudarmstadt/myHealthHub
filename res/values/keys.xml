@@ -45,6 +45,7 @@
 
     <!-- specific sensor name key -->
     <string name="key_polar">Polar Bluetooth Heart Rate</string>
+    <string name="key_zephyrHxM">ZephyrHxM Bluetooth Heart Rate</string>
     <string name="key_debug">Bluetooth Debug Sensor</string>
     
     <!-- internal sensor type -->

@@ -37,6 +37,7 @@ public abstract class SensorReadingEvent extends Event {
 	//public static String RR_INTERVAL = READING_EVENT+".Physiological.Cardiovascular.ECG.RRInterval";
 	public static String BLOOD_PRESSURE = READING_EVENT+".Physiological.Cardiovascular.BloodPressure";
 	public static String HR_FIDELITY = READING_EVENT+".Physiological.Cardiovascular.ECG.HRFidelity";
+	public static String HR_VARIABILITY = READING_EVENT+".Physiological.Cardiovascular.ECG.HRVariability";
 	
 	/** .physiological.calorieexpenditure */
 	//public static String CALORIE_EXPENDITURE = READING_EVENT+".Physiological.CalorieExpenditure";

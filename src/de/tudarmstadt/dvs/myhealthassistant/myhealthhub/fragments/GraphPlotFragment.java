@@ -38,8 +38,10 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationm
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.TrafficData;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,13 +61,15 @@ public class GraphPlotFragment extends Fragment {
 
 	private static boolean barType = true;
 
-	private ArrayList<GraphViewData> data_light;
-	private ArrayList<GraphViewData> data_acc;
+	private ArrayList<GraphViewData> data_line;
+	private ArrayList<GraphViewData> data_bar;
 
 	private ArrayList<String> avalDate;
 
-	public static String lightGrpDes = "Light in lux/min";
-	public static String motionGrpDes = "Motion Strength/min";
+	public static String lineGrpTitle = "";
+	public static String barGrpTitle = "";
+	private int lineGrpType = -1;
+	private int barGrpType = -1;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,8 +87,8 @@ public class GraphPlotFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 
-		data_light = new ArrayList<GraphViewData>();
-		data_acc = new ArrayList<GraphViewData>();
+		data_line = new ArrayList<GraphViewData>();
+		data_bar = new ArrayList<GraphViewData>();
 
 		CheckBox cBox = (CheckBox) rootView.findViewById(R.id.start_record);
 		cBox.setVisibility(View.GONE);
@@ -135,8 +139,11 @@ public class GraphPlotFragment extends Fragment {
 			}
 		});
 
-		data_light = updateTrafficOnDate(getCurrentDate(), Sensor.TYPE_LIGHT);
-		data_acc = updateTrafficOnDate(getCurrentDate(), Sensor.TYPE_ACCELEROMETER);
+		
+		updateTitleAndType();
+		
+		data_line = updateTrafficOnDate(getCurrentDate(), lineGrpType);
+		data_bar = updateTrafficOnDate(getCurrentDate(), barGrpType);
 		redrawCharts();
 
 		LinearLayout layout_light = (LinearLayout) rootView
@@ -166,8 +173,64 @@ public class GraphPlotFragment extends Fragment {
 		String date = ((TextView) rootView.findViewById(R.id.at_date))
 				.getText().toString();
 		i.putExtra("Timy", date);
+		i.putExtra("lineGraphTitle", lineGrpTitle);
+		i.putExtra("lineGraphType", lineGrpType);
+		i.putExtra("barGraphTitle", barGrpTitle);
+		i.putExtra("barGraphType", barGrpType);
 		this.getActivity().startActivity(i);
 
+	}
+	
+	private void updateTitleAndType(){
+
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		
+		if (pref.getBoolean(getResources().getString(R.string.in_acc), false)){
+			barGrpTitle = "Motion Strength/min";
+			barGrpType = Sensor.TYPE_ACCELEROMETER;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_grav), false)){
+			barGrpTitle = "Gravity Strength/min";
+			barGrpType = Sensor.TYPE_GRAVITY;
+		}
+
+		if (pref.getBoolean(getResources().getString(R.string.in_gyrs), false)){
+			barGrpTitle = "Gyroscope Strength/min";
+			barGrpType = Sensor.TYPE_GYROSCOPE;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)){
+			lineGrpTitle = "Humidity Strength/min";
+			lineGrpType = Sensor.TYPE_RELATIVE_HUMIDITY;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_lig), false)){
+			lineGrpTitle = "Light in lux/min";
+			lineGrpType = Sensor.TYPE_LIGHT;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_lin_acc), false)){
+			barGrpTitle = "Linear Accelerometer Strength/min";
+			barGrpType = Sensor.TYPE_LINEAR_ACCELERATION;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_mag), false)){
+			barGrpTitle = "Magnetic Field Strength/min";
+			barGrpType = Sensor.TYPE_MAGNETIC_FIELD;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_pres), false)){
+			lineGrpTitle = "Pressure in min";
+			lineGrpType = Sensor.TYPE_PRESSURE;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_prox), false)){
+			lineGrpTitle = "Proximity in min";
+			lineGrpType = Sensor.TYPE_PROXIMITY;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_tem), false)){
+			lineGrpTitle = "Ambient Temperature in °C";
+			lineGrpType = Sensor.TYPE_AMBIENT_TEMPERATURE;
+		}
+		if (pref.getBoolean(getResources().getString(R.string.pulse), false)){
+			lineGrpTitle = "Heart Rate bpm";
+			lineGrpType = 999;
+		}
 	}
 
 	@Override
@@ -181,6 +244,7 @@ public class GraphPlotFragment extends Fragment {
 	}
 
 	private void dateBackAndForth(boolean back) {
+		updateTitleAndType();
 		TextView atDate = (TextView) rootView.findViewById(R.id.at_date);
 		String newDate = atDate.getText().toString();
 		if (back) {
@@ -190,8 +254,8 @@ public class GraphPlotFragment extends Fragment {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_light = updateTrafficOnDate(newDate, Sensor.TYPE_LIGHT);
-		data_acc = updateTrafficOnDate(newDate, Sensor.TYPE_ACCELEROMETER);
+		data_line = updateTrafficOnDate(newDate, lineGrpType);
+		data_bar = updateTrafficOnDate(newDate, barGrpType);
 		redrawCharts();
 		atDate.setText(newDate);
 	}
@@ -287,8 +351,8 @@ public class GraphPlotFragment extends Fragment {
 	}
 
 	private void clearAllCharts() {
-		clearChart(lightGrpDes);
-		clearChart(motionGrpDes);
+		clearChart(lineGrpTitle);
+		clearChart(barGrpTitle);
 	}
 
 	private void clearChart(String title) {
@@ -296,37 +360,37 @@ public class GraphPlotFragment extends Fragment {
 		dataList[0] = new GraphViewData(0.0, 0.0);
 		GraphViewSeries gvs_series = new GraphViewSeries(dataList);
 
-		if (title.equals(lightGrpDes)) {
-			createGraph(lightGrpDes, gvs_series, R.id.light_graph, !barType);
-			data_light = new ArrayList<GraphView.GraphViewData>();
+		if (title.equals(lineGrpTitle)) {
+			createGraph(lineGrpTitle, gvs_series, R.id.light_graph, !barType);
+			data_line = new ArrayList<GraphView.GraphViewData>();
 		}
-		if (title.equals(motionGrpDes)) {
-			createGraph(motionGrpDes, gvs_series, R.id.motion_graph, barType);
-			data_acc = new ArrayList<GraphView.GraphViewData>();
+		if (title.equals(barGrpTitle)) {
+			createGraph(barGrpTitle, gvs_series, R.id.motion_graph, barType);
+			data_bar = new ArrayList<GraphView.GraphViewData>();
 		}
 	}
 
 	private void redrawCharts() {
-		if (data_light.size() > 0) {
+		if (data_line.size() > 0) {
 
-			GraphViewData[] dataList = new GraphViewData[data_light.size()];
-			for (int i = 0; i < data_light.size(); i++) {
-				dataList[i] = data_light.get(i);
+			GraphViewData[] dataList = new GraphViewData[data_line.size()];
+			for (int i = 0; i < data_line.size(); i++) {
+				dataList[i] = data_line.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-			createGraph(lightGrpDes, gvs_light, R.id.light_graph, !barType);
+			createGraph(lineGrpTitle, gvs_light, R.id.light_graph, !barType);
 		} else {
-			clearChart(lightGrpDes);
+			clearChart(lineGrpTitle);
 		}
-		if (data_acc.size() > 0) {
-			GraphViewData[] dataAcc = new GraphViewData[data_acc.size()];
-			for (int i = 0; i < data_acc.size(); i++) {
-				dataAcc[i] = data_acc.get(i);
+		if (data_bar.size() > 0) {
+			GraphViewData[] dataAcc = new GraphViewData[data_bar.size()];
+			for (int i = 0; i < data_bar.size(); i++) {
+				dataAcc[i] = data_bar.get(i);
 			}
 			GraphViewSeries gvs_acc = new GraphViewSeries(dataAcc);
-			createGraph(motionGrpDes, gvs_acc, R.id.motion_graph, barType);
+			createGraph(barGrpTitle, gvs_acc, R.id.motion_graph, barType);
 		} else {
-			clearChart(motionGrpDes);
+			clearChart(barGrpTitle);
 		}
 	}
 

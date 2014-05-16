@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
- 
- /**
+ */
+
+/**
  * 
  */
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import unpublish.ZephyrHxMModule;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -50,6 +51,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.StopPr
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventAnkle;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventWrist;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.AbstractBluetoothSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.AbstractSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.cardiovascular.PolarHRModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.AccSensorModule;
@@ -57,6 +59,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.C
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.DebugSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.BodySensors;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.cardiovascular.HeartRatePolarBluetoothSensor;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.cardiovascular.HeartRateZephyrHxM;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.physical.HedgeHogAccelerometer;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.physical.PorcupineAccelerometer;
 
@@ -72,6 +75,7 @@ public class SensorModuleManager extends Service {
 	private DebugSensorModule mDebugAccSensor;
 
 	// ECG Modules
+	private ZephyrHxMModule mZephyrHxmModule;
 	private PolarHRModule mPolarHRModule;
 
 	// Acc Modules
@@ -81,6 +85,7 @@ public class SensorModuleManager extends Service {
 	private DebugSensorModule mHedgehogDebugSensor;
 
 	// Blood Pressure
+	private AbstractBluetoothSensorModule mCorscienceBloodPressureSensor;
 
 	// Scale
 
@@ -135,14 +140,12 @@ public class SensorModuleManager extends Service {
 
 		super.onCreate();
 	}
-	
 
 	@Override
 	public int onStartCommand(Intent i, int flags, int startId) {
-//		Log.e(TAG,
-//				"call me redundant BABY!  onStartCommand service");
-		
-		
+		// Log.e(TAG,
+		// "call me redundant BABY!  onStartCommand service");
+
 		Intent intent = new Intent(this, MyHealthHubWithFragments.class);
 		PendingIntent pendIntent = PendingIntent
 				.getActivity(this, 0, intent, 0);
@@ -156,10 +159,10 @@ public class SensorModuleManager extends Service {
 
 		notice.flags |= Notification.FLAG_AUTO_CANCEL;
 		startForeground(myID, notice);
-		
-		//Start sensor connections
+
+		// Start sensor connections
 		startAutoConnectSensorModules();
-		
+
 		return START_STICKY;
 	}
 
@@ -175,9 +178,9 @@ public class SensorModuleManager extends Service {
 		// stop auto-connection of active modules
 		autoConnectionHandler.removeCallbacks(autoConnection);
 
-		//stop all sensor modules
+		// stop all sensor modules
 		stopSensorModules();
-		
+
 		stopForeground(true);
 		super.onDestroy();
 	}
@@ -310,11 +313,10 @@ public class SensorModuleManager extends Service {
 			}
 		}
 	}
-	
-	private void stopSensorModules(){
+
+	private void stopSensorModules() {
 		if (D)
-			Log.e(TAG,
-					"disabling modules...");
+			Log.e(TAG, "disabling modules...");
 		String[] sensorTypesArray = getResources().getStringArray(
 				R.array.sensor_type_config);
 		for (String st : sensorTypesArray) {
@@ -333,6 +335,14 @@ public class SensorModuleManager extends Service {
 						new HeartRatePolarBluetoothSensor(id, mac)));
 			else
 				disable(mPolarHRModule);
+		}
+		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))) {
+			if (enable) {
+				mZephyrHxmModule = (ZephyrHxMModule) initializeSensorModule(new ZephyrHxMModule(
+						getApplicationContext(),
+						new HeartRateZephyrHxM(id, mac)));
+			} else
+				disable(mZephyrHxmModule);
 		}
 		if (moduleKey.equals(getResources().getString(R.string.key_debug))) {
 			if (enable)
@@ -411,63 +421,6 @@ public class SensorModuleManager extends Service {
 		}
 	}
 	
-	private AccSensorModule initializeModulePorcupineChest() {
-		return (AccSensorModule) initializeSensorModule(new AccSensorModule(
-				this, new PorcupineAccelerometer(
-						BodySensors.ACC_HEDGEHOG_CHEST_ID,
-						BodySensors.ACC_HEDGEHOG_CHEST_MAC)));
-	}
-
-	/*
-	 * private AccSensorModule initializeModulePorcupineLeg() { return
-	 * (AccSensorModule) initializeSensorModule(new AccSensorModule( this, new
-	 * PorcupineAccelerometer( BodySensors.ACC_HEDGEHOG_LEG_ID,
-	 * BodySensors.ACC_HEDGEHOG_LEG_MAC))); }
-	 */
-
-	private AccSensorModule initializeModuleHedgeHogAnkle() {
-		return (AccSensorModule) initializeSensorModule(new CountAccHedgeHogSensorModule(
-				this, new HedgeHogAccelerometer(
-						BodySensors.ACC_HEDGEHOG_LEG_ID,
-						BodySensors.ACC_HEDGEHOG_LEG_MAC,
-						AccSensorEventAnkle.EVENT_TYPE)));
-	}
-
-	/*
-	 * private CountAccSensorModule initializeModulePorcupineWrist() { return
-	 * (CountAccSensorModule) initializeSensorModule(new CountAccSensorModule(
-	 * this, new PorcupineAccelerometer( BodySensors.ACC_HEDGEHOG_WRIST_ID,
-	 * BodySensors.ACC_HEDGEHOG_WRIST_MAC))); }
-	 */
-
-	private AccSensorModule initializeModuleHedgeHogWrist() {
-		return (AccSensorModule) initializeSensorModule(new CountAccHedgeHogSensorModule(
-				this, new HedgeHogAccelerometer(
-						BodySensors.ACC_HEDGEHOG_WRIST_ID,
-						BodySensors.ACC_HEDGEHOG_WRIST_MAC,
-						AccSensorEventWrist.EVENT_TYPE)));
-	}
-
-	private PolarHRModule initializeModuleHartRatePolarBluetooth() {
-		return (PolarHRModule) initializeSensorModule(new PolarHRModule(this,
-				new HeartRatePolarBluetoothSensor(
-						BodySensors.HEART_RATE_SENSOR_POLAR_BLUETOOTH_ID,
-						BodySensors.HEART_RATE_SENSOR_POLAR_BLUETOOTH_MAC)));
-	}
-
-	private DebugSensorModule initializeModuleHedgehogDebug() {
-		return (DebugSensorModule) initializeSensorModule(new DebugSensorModule(
-				this, new PorcupineAccelerometer(
-						BodySensors.ACC_HEDGEHOG_DEBUG_ID,
-						BodySensors.ACC_HEDGEHOG_DEBUG_MAC)));
-	}
-
-	private DebugSensorModule initializeModuleHedgehogDebug(String MAC) {
-		return (DebugSensorModule) initializeSensorModule(new DebugSensorModule(
-				this, new PorcupineAccelerometer(
-						BodySensors.ACC_HEDGEHOG_DEBUG_ID, MAC)));
-	}
-
 	/*
 	 * private void startInfraWoTModule() { if(mInfraWOTModule == null)
 	 * mInfraWOTModule = new InfraWotModule(this); }
@@ -522,11 +475,14 @@ public class SensorModuleManager extends Service {
 	private void removeFromActiveModules(AbstractSensorModule module) {
 		listOfActiveModules.remove(module);
 	}
-	
+
 	private AbstractSensorModule getModule(String moduleKey) {
 		// switch with mapping sensor ID to its Module;
 		if (moduleKey.equals(getResources().getString(R.string.key_polar))) {
 			return mPolarHRModule;
+		}
+		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))){
+			return mZephyrHxmModule;
 		}
 		if (moduleKey.equals(getResources().getString(R.string.key_debug))) {
 			return mHedgehogDebugSensor;
@@ -538,12 +494,11 @@ public class SensorModuleManager extends Service {
 	public IBinder onBind(Intent intent) {
 		return mSensorModuleManagerBinder;
 	}
-	
 
 	@Override
 	public boolean onUnbind(Intent intent) {
 		super.onUnbind(intent);
-		
+
 		return true;
 	}
 
@@ -577,7 +532,7 @@ public class SensorModuleManager extends Service {
 		}
 
 		/**
-		 * Ha enableModule acording to moduleKey
+		 * Ha enableModule according to moduleKey
 		 * 
 		 * @param moduleKey
 		 * @param enable
@@ -591,92 +546,5 @@ public class SensorModuleManager extends Service {
 
 		// **********************************
 
-		public void enableHeartRatePolarBT(boolean enable) {
-			if (enable) {
-				mPolarHRModule = initializeModuleHartRatePolarBluetooth();
-			} else {
-				removeModuleFromAvailableSensorModules(mPolarHRModule);
-				destroySensorModule(mPolarHRModule);
-				mPolarHRModule = null;
-			}
-		}
-
-		public void connectToHeartRatePolarBT() {
-			if (mPolarHRModule != null)
-				mPolarHRModule.start();
-		}
-
-		public void enableAccPorcupineLeg(boolean enable) {
-			if (enable) {
-				mHedgeHogAccAnkleLegSensor = initializeModuleHedgeHogAnkle();
-			} else {
-				removeModuleFromAvailableSensorModules(mHedgeHogAccAnkleLegSensor);
-				destroySensorModule(mHedgeHogAccAnkleLegSensor);
-			}
-		}
-
-		public void connectToLegAccSensor() {
-			if (mHedgeHogAccAnkleLegSensor != null)
-				mHedgeHogAccAnkleLegSensor.start();
-		}
-
-		public void enableAccPorcupineChest(boolean enable) {
-			if (enable) {
-				mPorcupineChestAccSensor = initializeModulePorcupineChest();
-			} else {
-				removeModuleFromAvailableSensorModules(mPorcupineChestAccSensor);
-				destroySensorModule(mPorcupineChestAccSensor);
-			}
-		}
-
-		public void connectToChestAccSensor() {
-			if (mPorcupineChestAccSensor != null)
-				mPorcupineChestAccSensor.start();
-		}
-
-		public void enableAccPorcupineWrist(boolean enable) {
-			if (enable) {
-				mHedgeHogWristSensor = initializeModuleHedgeHogWrist();
-			} else {
-				removeModuleFromAvailableSensorModules(mHedgeHogWristSensor);
-				destroySensorModule(mHedgeHogWristSensor);
-			}
-		}
-
-		public void connectToWristAccSensor() {
-			if (mHedgeHogWristSensor != null)
-				mHedgeHogWristSensor.start();
-		}
-
-		public void enableAccHedgehogDebug(boolean enable) {
-			if (enable) {
-				mHedgehogDebugSensor = initializeModuleHedgehogDebug();
-			} else {
-				removeModuleFromAvailableSensorModules(mHedgehogDebugSensor);
-				destroySensorModule(mHedgehogDebugSensor);
-			}
-		}
-
-		public void enableAccHedgehogDebug(boolean enable, String MAC) {
-			if (enable) {
-				mHedgehogDebugSensor = initializeModuleHedgehogDebug(MAC);
-			} else {
-				removeModuleFromAvailableSensorModules(mHedgehogDebugSensor);
-				destroySensorModule(mHedgehogDebugSensor);
-			}
-		}
-
-		public void connectToAccDebugSensor() {
-			if (mHedgehogDebugSensor != null)
-				mHedgehogDebugSensor.start();
-		}
-		
-		public void autoEnableConfigChanged() {
-			startAutoConnectSensorModules();
-		}
-
-		public List<AbstractSensorModule> getListActiveModule() {
-			return listOfActiveModules;
-		}
 	}
 }

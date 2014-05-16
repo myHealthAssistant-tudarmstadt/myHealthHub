@@ -87,7 +87,6 @@ public class PolarHRModule extends AbstractBluetoothSensorModule {
 		}
 	}
 	
-	
 	// Debugging
 	public void printPacketInHex(int bytes, byte[] buffer, String info) {
 		String text = "";
