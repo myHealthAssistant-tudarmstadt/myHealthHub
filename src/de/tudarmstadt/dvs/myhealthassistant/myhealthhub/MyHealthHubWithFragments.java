@@ -22,7 +22,9 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -85,16 +87,16 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
 		// set up listener for internal sensor:
-//		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//		if (!pref.getBoolean("firstBoot", false)){
-//			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_ACCELEROMETER, true).commit();
-//			pref.edit().putBoolean(InternalSensorListAdapter.PREF_SENSOR_TYPE + Sensor.TYPE_LIGHT, true).commit();
-//			
-////			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
-////			getApplicationContext().startService(intent);
-//			pref.edit().putBoolean("firstBoot", true).commit();
-//
-//		}
+		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		if (!pref.getBoolean("firstBoot", false)){
+			pref.edit().putBoolean(getResources().getString(R.string.in_acc), true).commit();
+			pref.edit().putBoolean(getResources().getString(R.string.in_lig), true).commit();
+			
+			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+			getApplicationContext().startService(intent);
+			pref.edit().putBoolean("firstBoot", true).commit();
+
+		}
 		
 		WakeupAlarm wAlarm = new WakeupAlarm();
 		wAlarm.setAlarm(getApplicationContext());

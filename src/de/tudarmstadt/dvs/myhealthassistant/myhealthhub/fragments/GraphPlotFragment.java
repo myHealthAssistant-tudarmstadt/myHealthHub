@@ -59,17 +59,17 @@ public class GraphPlotFragment extends Fragment {
 	private static final String TAG = GraphPlotFragment.class.getSimpleName();
 	private View rootView;
 
-	private static boolean barType = true;
+	private boolean isBarType = true;
 
 	private ArrayList<GraphViewData> data_line;
 	private ArrayList<GraphViewData> data_bar;
 
 	private ArrayList<String> avalDate;
 
-	public static String lineGrpTitle = "";
-	public static String barGrpTitle = "";
-	private int lineGrpType = -1;
-	private int barGrpType = -1;
+	public static String firstGrpTitle = "";
+	public static String secondGrpTitle = "";
+	private int firstGrpType = -1;
+	private int secondGrpType = -1;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,8 +109,8 @@ public class GraphPlotFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-//				CookTraffic mCook = new CookTraffic(getActivity().getApplicationContext());
-//				mCook.cookUp();
+				CookTraffic mCook = new CookTraffic(getActivity().getApplicationContext());
+				mCook.cookUp();
 //				clearAllCharts();
 //				clearDb(((TextView) rootView.findViewById(R.id.at_date))
 //						.getText().toString());
@@ -142,8 +142,8 @@ public class GraphPlotFragment extends Fragment {
 		
 		updateTitleAndType();
 		
-		data_line = updateTrafficOnDate(getCurrentDate(), lineGrpType);
-		data_bar = updateTrafficOnDate(getCurrentDate(), barGrpType);
+		data_line = updateTrafficOnDate(getCurrentDate(), firstGrpType);
+		data_bar = updateTrafficOnDate(getCurrentDate(), secondGrpType);
 		redrawCharts();
 
 		LinearLayout layout_light = (LinearLayout) rootView
@@ -173,63 +173,90 @@ public class GraphPlotFragment extends Fragment {
 		String date = ((TextView) rootView.findViewById(R.id.at_date))
 				.getText().toString();
 		i.putExtra("Timy", date);
-		i.putExtra("lineGraphTitle", lineGrpTitle);
-		i.putExtra("lineGraphType", lineGrpType);
-		i.putExtra("barGraphTitle", barGrpTitle);
-		i.putExtra("barGraphType", barGrpType);
+		i.putExtra("lineGraphTitle", firstGrpTitle);
+		i.putExtra("lineGraphType", firstGrpType);
+		i.putExtra("barGraphTitle", secondGrpTitle);
+		i.putExtra("barGraphType", secondGrpType);
 		this.getActivity().startActivity(i);
 
 	}
 	
 	private void updateTitleAndType(){
 
+		ArrayList<String> grpTitle = new ArrayList<String>();
+		ArrayList<Integer> grpType = new ArrayList<Integer>();
+		
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		
 		if (pref.getBoolean(getResources().getString(R.string.in_acc), false)){
-			barGrpTitle = "Motion Strength/min";
-			barGrpType = Sensor.TYPE_ACCELEROMETER;
+			grpTitle.add("Motion Strength/min");
+			grpType.add(Sensor.TYPE_ACCELEROMETER);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_grav), false)){
-			barGrpTitle = "Gravity Strength/min";
-			barGrpType = Sensor.TYPE_GRAVITY;
+			grpTitle.add("Gravity Strength/min");
+			grpType.add(Sensor.TYPE_GRAVITY);
+			
 		}
 
 		if (pref.getBoolean(getResources().getString(R.string.in_gyrs), false)){
-			barGrpTitle = "Gyroscope Strength/min";
-			barGrpType = Sensor.TYPE_GYROSCOPE;
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)){
-			lineGrpTitle = "Humidity Strength/min";
-			lineGrpType = Sensor.TYPE_RELATIVE_HUMIDITY;
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_lig), false)){
-			lineGrpTitle = "Light in lux/min";
-			lineGrpType = Sensor.TYPE_LIGHT;
+			grpTitle.add("Gyroscope Strength/min");
+			grpType.add(Sensor.TYPE_GYROSCOPE);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_lin_acc), false)){
-			barGrpTitle = "Linear Accelerometer Strength/min";
-			barGrpType = Sensor.TYPE_LINEAR_ACCELERATION;
+			grpTitle.add("Linear Accelerometer Strength/min");
+			grpType.add(Sensor.TYPE_LINEAR_ACCELERATION);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_mag), false)){
-			barGrpTitle = "Magnetic Field Strength/min";
-			barGrpType = Sensor.TYPE_MAGNETIC_FIELD;
+			grpTitle.add("Magnetic Field Strength/min");
+			grpType.add(Sensor.TYPE_MAGNETIC_FIELD);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)){
+			grpTitle.add("Humidity");
+			grpType.add(Sensor.TYPE_RELATIVE_HUMIDITY);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_lig), false)){
+			grpTitle.add("Light in lux/min");
+			grpType.add(Sensor.TYPE_LIGHT);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_pres), false)){
-			lineGrpTitle = "Pressure in min";
-			lineGrpType = Sensor.TYPE_PRESSURE;
+			grpTitle.add("Pressure in min");
+			grpType.add(Sensor.TYPE_PRESSURE);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_prox), false)){
-			lineGrpTitle = "Proximity in min";
-			lineGrpType = Sensor.TYPE_PROXIMITY;
+			grpTitle.add("Proximity in min");
+			grpType.add(Sensor.TYPE_PROXIMITY);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_tem), false)){
-			lineGrpTitle = "Ambient Temperature in °C";
-			lineGrpType = Sensor.TYPE_AMBIENT_TEMPERATURE;
+			grpTitle.add("Ambient Temperature in °C");
+			grpType.add(Sensor.TYPE_AMBIENT_TEMPERATURE);
+			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.pulse), false)){
-			lineGrpTitle = "Heart Rate bpm";
-			lineGrpType = 999;
+			grpTitle.add("Heart Rate bpm");
+			grpType.add(999);
+			
+		}
+		if (grpTitle.size() == 2 && grpType.size() == 2){
+			firstGrpTitle = grpTitle.get(0);
+			firstGrpType = grpType.get(0);
+			
+			secondGrpTitle = grpTitle.get(1);
+			secondGrpType = grpType.get(1);
+		} else if (grpTitle.size() == 1 && grpType.size() == 1){
+			firstGrpTitle = grpTitle.get(0);
+			firstGrpType = grpType.get(0);
+			
+			secondGrpTitle = "";
+			secondGrpType = -1;
 		}
 	}
 
@@ -254,8 +281,8 @@ public class GraphPlotFragment extends Fragment {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_line = updateTrafficOnDate(newDate, lineGrpType);
-		data_bar = updateTrafficOnDate(newDate, barGrpType);
+		data_line = updateTrafficOnDate(newDate, firstGrpType);
+		data_bar = updateTrafficOnDate(newDate, secondGrpType);
 		redrawCharts();
 		atDate.setText(newDate);
 	}
@@ -351,8 +378,8 @@ public class GraphPlotFragment extends Fragment {
 	}
 
 	private void clearAllCharts() {
-		clearChart(lineGrpTitle);
-		clearChart(barGrpTitle);
+		clearChart(firstGrpTitle);
+		clearChart(secondGrpTitle);
 	}
 
 	private void clearChart(String title) {
@@ -360,12 +387,12 @@ public class GraphPlotFragment extends Fragment {
 		dataList[0] = new GraphViewData(0.0, 0.0);
 		GraphViewSeries gvs_series = new GraphViewSeries(dataList);
 
-		if (title.equals(lineGrpTitle)) {
-			createGraph(lineGrpTitle, gvs_series, R.id.light_graph, !barType);
+		if (title.equals(firstGrpTitle)) {
+			createGraph(firstGrpTitle, gvs_series, R.id.light_graph, !isBarType);
 			data_line = new ArrayList<GraphView.GraphViewData>();
 		}
-		if (title.equals(barGrpTitle)) {
-			createGraph(barGrpTitle, gvs_series, R.id.motion_graph, barType);
+		if (title.equals(secondGrpTitle)) {
+			createGraph(secondGrpTitle, gvs_series, R.id.motion_graph, isBarType);
 			data_bar = new ArrayList<GraphView.GraphViewData>();
 		}
 	}
@@ -378,9 +405,9 @@ public class GraphPlotFragment extends Fragment {
 				dataList[i] = data_line.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-			createGraph(lineGrpTitle, gvs_light, R.id.light_graph, !barType);
+			createGraph(firstGrpTitle, gvs_light, R.id.light_graph, !isBarType);
 		} else {
-			clearChart(lineGrpTitle);
+			clearChart(firstGrpTitle);
 		}
 		if (data_bar.size() > 0) {
 			GraphViewData[] dataAcc = new GraphViewData[data_bar.size()];
@@ -388,9 +415,9 @@ public class GraphPlotFragment extends Fragment {
 				dataAcc[i] = data_bar.get(i);
 			}
 			GraphViewSeries gvs_acc = new GraphViewSeries(dataAcc);
-			createGraph(barGrpTitle, gvs_acc, R.id.motion_graph, barType);
+			createGraph(secondGrpTitle, gvs_acc, R.id.motion_graph, isBarType);
 		} else {
-			clearChart(barGrpTitle);
+			clearChart(secondGrpTitle);
 		}
 	}
 
