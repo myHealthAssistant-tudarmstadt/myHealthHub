@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import unpublish.ZephyrHxMModule;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -48,19 +47,14 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.Event;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.Announcement;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.StartProducer;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.StopProducer;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventAnkle;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventWrist;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.fragments.SensorConfigFragment;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.AbstractBluetoothSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.AbstractSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.cardiovascular.PolarHRModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.AccSensorModule;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.CountAccHedgeHogSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensormodules.physical.DebugSensorModule;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.BodySensors;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.cardiovascular.HeartRatePolarBluetoothSensor;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.cardiovascular.HeartRateZephyrHxM;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.physical.HedgeHogAccelerometer;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.sensorrepository.physical.PorcupineAccelerometer;
 
 /**
@@ -75,7 +69,7 @@ public class SensorModuleManager extends Service {
 	private DebugSensorModule mDebugAccSensor;
 
 	// ECG Modules
-	private ZephyrHxMModule mZephyrHxmModule;
+//	private ZephyrHxMModule mZephyrHxmModule;
 	private PolarHRModule mPolarHRModule;
 
 	// Acc Modules
@@ -336,14 +330,14 @@ public class SensorModuleManager extends Service {
 			else
 				disable(mPolarHRModule);
 		}
-		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))) {
-			if (enable) {
-				mZephyrHxmModule = (ZephyrHxMModule) initializeSensorModule(new ZephyrHxMModule(
-						getApplicationContext(),
-						new HeartRateZephyrHxM(id, mac)));
-			} else
-				disable(mZephyrHxmModule);
-		}
+//		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))) {
+//			if (enable) {
+//				mZephyrHxmModule = (ZephyrHxMModule) initializeSensorModule(new ZephyrHxMModule(
+//						getApplicationContext(),
+//						new HeartRateZephyrHxM(id, mac)));
+//			} else
+//				disable(mZephyrHxmModule);
+//		}
 		if (moduleKey.equals(getResources().getString(R.string.key_debug))) {
 			if (enable)
 				mHedgehogDebugSensor = (DebugSensorModule) initializeSensorModule(new DebugSensorModule(
@@ -481,9 +475,9 @@ public class SensorModuleManager extends Service {
 		if (moduleKey.equals(getResources().getString(R.string.key_polar))) {
 			return mPolarHRModule;
 		}
-		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))){
-			return mZephyrHxmModule;
-		}
+//		if (moduleKey.equals(getResources().getString(R.string.key_zephyrHxM))){
+//			return mZephyrHxmModule;
+//		}
 		if (moduleKey.equals(getResources().getString(R.string.key_debug))) {
 			return mHedgehogDebugSensor;
 		}
