@@ -32,7 +32,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.en
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.HumidityEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.ProximityEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.environmental.raw.TemperatureEvent;
-import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccSensorEventKnee;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.AccDeviceSensorEvent; 
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.GyroscopeSensorEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.physical.MagneticSensorEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.graphActivities.Coordinate;
@@ -204,16 +204,16 @@ public class InternalSensorService extends Service implements
 
 			// using ACCELEROMETER_KNEE only as a demonstration,
 			// in practice new event can be created
-			AccSensorEventKnee accEvt = new AccSensorEventKnee("eventID",
+			AccDeviceSensorEvent accEvt = new AccDeviceSensorEvent("eventID",
 					getTimestamp(), "producerID",
-					SensorReadingEvent.ACCELEROMETER_KNEE, getTimestamp(), x,
+					SensorReadingEvent.ACCELEROMETER_ON_DEVICE, getTimestamp(), x,
 					y, z, x, y, z);
 
 			sendToChannel(accEvt, AbstractChannel.RECEIVER); // for external
 																// apps
 																// subscription
 			gotAccEvent(getTimestamp(), Sensor.TYPE_ACCELEROMETER, x, y, z); // for
-																				// internal
+																				// on device
 																				// graphViews
 			// using
 		}
@@ -306,9 +306,9 @@ public class InternalSensorService extends Service implements
 
 			// using ACCELEROMETER_KNEE only as a demonstration,
 			// in practice new event can be created
-			AccSensorEventKnee accEvt = new AccSensorEventKnee("eventID",
+			AccDeviceSensorEvent accEvt = new AccDeviceSensorEvent("eventID",
 					getTimestamp(), "producerID",
-					SensorReadingEvent.ACCELEROMETER, getTimestamp(), x, y, z,
+					SensorReadingEvent.ACCELEROMETER_ON_DEVICE, getTimestamp(), x, y, z,
 					x, y, z);
 
 			sendToChannel(accEvt, AbstractChannel.RECEIVER);
@@ -328,6 +328,7 @@ public class InternalSensorService extends Service implements
 		i.putExtra(Event.PARCELABLE_EXTRA_EVENT_TYPE, evt.getEventType());
 		i.putExtra(Event.PARCELABLE_EXTRA_EVENT, evt);
 		i.setAction(channel);
+//		getApplicationContext().sendBroadcast(i);
 		LocalBroadcastManager.getInstance(getApplicationContext())
 				.sendBroadcast(i);
 	}

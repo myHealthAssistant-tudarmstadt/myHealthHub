@@ -38,15 +38,15 @@ public class GraphPlotBigActivity extends Activity {
 	private static final String TAG = GraphPlotBigActivity.class
 			.getSimpleName();
 
-	private static boolean barType = true;
-
 	private ArrayList<GraphViewData> data_line;
 	private ArrayList<GraphViewData> data_bar;
 
-	public static String lineGrpTitle = "";
-	public static String barGrpTitle = "";
-	private int lineGrpType = -1;
-	private int barGrpType = -1;
+	public static String firstGrpTitle = "";
+	public static String secondGrpTitle = "";
+	private int firstGrpType = -1;
+	private int secondGrpType = -1;
+	private boolean isFirstBar = false;
+	private boolean isSecondBar = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -90,16 +90,22 @@ public class GraphPlotBigActivity extends Activity {
 			}
 			
 			if (extras.containsKey("lineGraphTitle"))
-				lineGrpTitle = extras.getString("lineGraphTitle");
+				firstGrpTitle = extras.getString("lineGraphTitle");
 			
 			if (extras.containsKey("lineGraphType"))
-				lineGrpType = extras.getInt("lineGraphType");
+				firstGrpType = extras.getInt("lineGraphType");
 			
 			if (extras.containsKey("barGraphTitle"))
-				barGrpTitle = extras.getString("barGraphTitle");
+				secondGrpTitle = extras.getString("barGraphTitle");
 			
 			if (extras.containsKey("barGraphType"))
-				barGrpType = extras.getInt("barGraphType");
+				secondGrpType = extras.getInt("barGraphType");
+			
+			if (extras.containsKey("isFirstBarType"))
+				isFirstBar = extras.getBoolean("isFirstBarType");
+			
+			if (extras.containsKey("isSecondBarType"))
+				isSecondBar = extras.getBoolean("isSecondBarType");
 		}
 		
 		atDate.setText(time);
@@ -123,8 +129,8 @@ public class GraphPlotBigActivity extends Activity {
 			}
 		});
 
-		data_line = updateTrafficOnDate(atDate.getText().toString(), lineGrpType);
-		data_bar = updateTrafficOnDate(atDate.getText().toString(), barGrpType);
+		data_line = updateTrafficOnDate(atDate.getText().toString(), firstGrpType);
+		data_bar = updateTrafficOnDate(atDate.getText().toString(), secondGrpType);
 		redrawCharts();
 
 	}
@@ -156,8 +162,8 @@ public class GraphPlotBigActivity extends Activity {
 		}
 
 		Log.e(TAG, "newDate: " + newDate); // FIXME
-		data_line = updateTrafficOnDate(newDate, lineGrpType);
-		data_bar = updateTrafficOnDate(newDate, barGrpType);
+		data_line = updateTrafficOnDate(newDate, firstGrpType);
+		data_bar = updateTrafficOnDate(newDate, secondGrpType);
 		redrawCharts();
 		atDate.setText(newDate);
 
@@ -185,8 +191,8 @@ public class GraphPlotBigActivity extends Activity {
 	}
 
 	private void clearAllCharts() {
-		clearChart(lineGrpTitle);
-		clearChart(barGrpTitle);
+		clearChart(firstGrpTitle);
+		clearChart(secondGrpTitle);
 	}
 
 	private void clearChart(String title) {
@@ -194,14 +200,14 @@ public class GraphPlotBigActivity extends Activity {
 		dataList[0] = new GraphViewData(0.0, 0.0);
 		GraphViewSeries gvs_series = new GraphViewSeries(dataList);
 
-		if (title.equals(lineGrpTitle)) {
-			createGraph(lineGrpTitle, gvs_series, R.id.light_graph, !barType, 0);
+		if (title.equals(firstGrpTitle)) {
+			createGraph(firstGrpTitle, gvs_series, R.id.light_graph, isFirstBar, 0);
 			
 			
 			data_line = new ArrayList<GraphView.GraphViewData>();
 		}
-		if (title.equals(barGrpTitle)) {
-			createGraph(barGrpTitle, gvs_series, R.id.motion_graph, barType, 0);
+		if (title.equals(secondGrpTitle)) {
+			createGraph(secondGrpTitle, gvs_series, R.id.motion_graph, isSecondBar, 0);
 			
 			
 			data_bar = new ArrayList<GraphView.GraphViewData>();
@@ -216,10 +222,10 @@ public class GraphPlotBigActivity extends Activity {
 				dataList[i] = data_line.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-				createGraph(lineGrpTitle, gvs_light, R.id.light_graph, !barType,
+				createGraph(firstGrpTitle, gvs_light, R.id.light_graph, isFirstBar,
 					dataList.length);
 		} else {
-			clearChart(lineGrpTitle);
+			clearChart(firstGrpTitle);
 		}
 		if (data_bar.size() > 0) {
 			GraphViewData[] dataAcc = new GraphViewData[data_bar.size()];
@@ -227,10 +233,10 @@ public class GraphPlotBigActivity extends Activity {
 				dataAcc[i] = data_bar.get(i);
 			}
 			GraphViewSeries gvs_acc = new GraphViewSeries(dataAcc);
-			createGraph(barGrpTitle, gvs_acc, R.id.motion_graph, barType,
+			createGraph(secondGrpTitle, gvs_acc, R.id.motion_graph, isSecondBar,
 					dataAcc.length);
 		} else {
-			clearChart(barGrpTitle);
+			clearChart(secondGrpTitle);
 		}
 	}
 	

@@ -59,8 +59,6 @@ public class GraphPlotFragment extends Fragment {
 	private static final String TAG = GraphPlotFragment.class.getSimpleName();
 	private View rootView;
 
-	private boolean isBarType = true;
-
 	private ArrayList<GraphViewData> data_line;
 	private ArrayList<GraphViewData> data_bar;
 
@@ -70,6 +68,8 @@ public class GraphPlotFragment extends Fragment {
 	public static String secondGrpTitle = "";
 	private int firstGrpType = -1;
 	private int secondGrpType = -1;
+	private boolean isFirstBar = false;
+	private boolean isSecondBar = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -175,8 +175,10 @@ public class GraphPlotFragment extends Fragment {
 		i.putExtra("Timy", date);
 		i.putExtra("lineGraphTitle", firstGrpTitle);
 		i.putExtra("lineGraphType", firstGrpType);
+		i.putExtra("isFirstBarType", isFirstBar);
 		i.putExtra("barGraphTitle", secondGrpTitle);
 		i.putExtra("barGraphType", secondGrpType);
+		i.putExtra("isSecondBarType", isSecondBar);
 		this.getActivity().startActivity(i);
 
 	}
@@ -185,75 +187,90 @@ public class GraphPlotFragment extends Fragment {
 
 		ArrayList<String> grpTitle = new ArrayList<String>();
 		ArrayList<Integer> grpType = new ArrayList<Integer>();
+		ArrayList<Boolean> grpBarType = new ArrayList<Boolean>();
 		
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(getActivity().getApplicationContext());
-		
+
+		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)){
+			grpTitle.add("Humidity");
+			grpType.add(Sensor.TYPE_RELATIVE_HUMIDITY);
+			grpBarType.add(false);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_lig), false)){
+			grpTitle.add("Light in lux/min");
+			grpType.add(Sensor.TYPE_LIGHT);
+			grpBarType.add(false);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_pres), false)){
+			grpTitle.add("Pressure in min");
+			grpType.add(Sensor.TYPE_PRESSURE);
+			grpBarType.add(false);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_prox), false)){
+			grpTitle.add("Proximity in min");
+			grpType.add(Sensor.TYPE_PROXIMITY);
+			grpBarType.add(false);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_tem), false)){
+			grpTitle.add("Ambient Temperature in °C");
+			grpType.add(Sensor.TYPE_AMBIENT_TEMPERATURE);
+			grpBarType.add(false);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.pulse), false)){
+			grpTitle.add("Heart Rate bpm");
+			grpType.add(999);
+			grpBarType.add(false);
+			
+		}
 		if (pref.getBoolean(getResources().getString(R.string.in_acc), false)){
 			grpTitle.add("Motion Strength/min");
 			grpType.add(Sensor.TYPE_ACCELEROMETER);
+			grpBarType.add(true);
+			
+		}
+		if (pref.getBoolean(getResources().getString(R.string.in_mag), false)){
+			grpTitle.add("Magnetic Field Strength/min");
+			grpType.add(Sensor.TYPE_MAGNETIC_FIELD);
+			grpBarType.add(true);
 			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_grav), false)){
 			grpTitle.add("Gravity Strength/min");
 			grpType.add(Sensor.TYPE_GRAVITY);
+			grpBarType.add(true);
 			
 		}
 
 		if (pref.getBoolean(getResources().getString(R.string.in_gyrs), false)){
 			grpTitle.add("Gyroscope Strength/min");
 			grpType.add(Sensor.TYPE_GYROSCOPE);
+			grpBarType.add(true);
 			
 		}
 		if (pref.getBoolean(getResources().getString(R.string.in_lin_acc), false)){
 			grpTitle.add("Linear Accelerometer Strength/min");
 			grpType.add(Sensor.TYPE_LINEAR_ACCELERATION);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_mag), false)){
-			grpTitle.add("Magnetic Field Strength/min");
-			grpType.add(Sensor.TYPE_MAGNETIC_FIELD);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_hum), false)){
-			grpTitle.add("Humidity");
-			grpType.add(Sensor.TYPE_RELATIVE_HUMIDITY);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_lig), false)){
-			grpTitle.add("Light in lux/min");
-			grpType.add(Sensor.TYPE_LIGHT);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_pres), false)){
-			grpTitle.add("Pressure in min");
-			grpType.add(Sensor.TYPE_PRESSURE);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_prox), false)){
-			grpTitle.add("Proximity in min");
-			grpType.add(Sensor.TYPE_PROXIMITY);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.in_tem), false)){
-			grpTitle.add("Ambient Temperature in °C");
-			grpType.add(Sensor.TYPE_AMBIENT_TEMPERATURE);
-			
-		}
-		if (pref.getBoolean(getResources().getString(R.string.pulse), false)){
-			grpTitle.add("Heart Rate bpm");
-			grpType.add(999);
+			grpBarType.add(true);
 			
 		}
 		if (grpTitle.size() == 2 && grpType.size() == 2){
 			firstGrpTitle = grpTitle.get(0);
 			firstGrpType = grpType.get(0);
+			isFirstBar = grpBarType.get(0);
 			
 			secondGrpTitle = grpTitle.get(1);
 			secondGrpType = grpType.get(1);
+			isSecondBar = grpBarType.get(1);
 		} else if (grpTitle.size() == 1 && grpType.size() == 1){
 			firstGrpTitle = grpTitle.get(0);
 			firstGrpType = grpType.get(0);
+			isFirstBar = grpBarType.get(0);
 			
 			secondGrpTitle = "";
 			secondGrpType = -1;
@@ -308,18 +325,18 @@ public class GraphPlotFragment extends Fragment {
 		return data;
 	}
 
-	private void clearDb(String date) {
-		// clear DBs of a today date
-		// initialize database
-		Log.e(TAG, "clear date: " + date);
-		this.transformationDB = new LocalTransformationDBMS(getActivity()
-				.getApplicationContext());
-		transformationDB.open();
-		int n = transformationDB.deleteAllTrafficFromDate(date);
-		transformationDB.close();
-
-		Log.e(TAG, "number of deleted rows= " + n);
-	}
+//	private void clearDb(String date) {
+//		// clear DBs of a today date
+//		// initialize database
+//		Log.e(TAG, "clear date: " + date);
+//		this.transformationDB = new LocalTransformationDBMS(getActivity()
+//				.getApplicationContext());
+//		transformationDB.open();
+//		int n = transformationDB.deleteAllTrafficFromDate(date);
+//		transformationDB.close();
+//
+//		Log.e(TAG, "number of deleted rows= " + n);
+//	}
 
 	private void createGraph(String graphTitle, GraphViewSeries series,
 			int Rid, boolean isBarChart) {
@@ -377,10 +394,10 @@ public class GraphPlotFragment extends Fragment {
 		rootView.postInvalidate();
 	}
 
-	private void clearAllCharts() {
-		clearChart(firstGrpTitle);
-		clearChart(secondGrpTitle);
-	}
+//	private void clearAllCharts() {
+//		clearChart(firstGrpTitle);
+//		clearChart(secondGrpTitle);
+//	}
 
 	private void clearChart(String title) {
 		GraphViewData[] dataList = new GraphViewData[1];
@@ -388,11 +405,11 @@ public class GraphPlotFragment extends Fragment {
 		GraphViewSeries gvs_series = new GraphViewSeries(dataList);
 
 		if (title.equals(firstGrpTitle)) {
-			createGraph(firstGrpTitle, gvs_series, R.id.light_graph, !isBarType);
+			createGraph(firstGrpTitle, gvs_series, R.id.light_graph, isFirstBar);
 			data_line = new ArrayList<GraphView.GraphViewData>();
 		}
 		if (title.equals(secondGrpTitle)) {
-			createGraph(secondGrpTitle, gvs_series, R.id.motion_graph, isBarType);
+			createGraph(secondGrpTitle, gvs_series, R.id.motion_graph, isSecondBar);
 			data_bar = new ArrayList<GraphView.GraphViewData>();
 		}
 	}
@@ -405,7 +422,7 @@ public class GraphPlotFragment extends Fragment {
 				dataList[i] = data_line.get(i);
 			}
 			GraphViewSeries gvs_light = new GraphViewSeries(dataList);
-			createGraph(firstGrpTitle, gvs_light, R.id.light_graph, !isBarType);
+			createGraph(firstGrpTitle, gvs_light, R.id.light_graph, isFirstBar);
 		} else {
 			clearChart(firstGrpTitle);
 		}
@@ -415,7 +432,7 @@ public class GraphPlotFragment extends Fragment {
 				dataAcc[i] = data_bar.get(i);
 			}
 			GraphViewSeries gvs_acc = new GraphViewSeries(dataAcc);
-			createGraph(secondGrpTitle, gvs_acc, R.id.motion_graph, isBarType);
+			createGraph(secondGrpTitle, gvs_acc, R.id.motion_graph, isSecondBar);
 		} else {
 			clearChart(secondGrpTitle);
 		}

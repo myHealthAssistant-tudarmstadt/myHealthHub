@@ -64,6 +64,8 @@ public abstract class SensorReadingEvent extends Event {
 	public static String PHYSICAL = READING_EVENT+".Physical";
 	private static String INERTIAL = PHYSICAL+".Inertial";
 	public static String ACCELEROMETER = INERTIAL+".Accelerometer";
+	public static String ACCELEROMETER_ON_DEVICE = ACCELEROMETER+".Device";
+	public static String ACCELEROMETER_IN_G = ACCELEROMETER+".G";
 	public static String ACCELEROMETER_KNEE = ACCELEROMETER+".Knee";
 	public static String ACCELEROMETER_ANKLE = ACCELEROMETER+".Ankle";
 	public static String ACCELEROMETER_WRIST = ACCELEROMETER+".Wrist";
