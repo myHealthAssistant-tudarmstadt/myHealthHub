@@ -211,15 +211,27 @@ public final class R {
         public static final int acc_debug=0x7f0a0012;
         public static final int acc_leg=0x7f0a000d;
         public static final int acc_wrist=0x7f0a000f;
-        public static final int action_settings=0x7f0a0021;
-        public static final int activate=0x7f0a0029;
+        public static final int action_settings=0x7f0a0029;
+        public static final int activate=0x7f0a0031;
         public static final int ambient_infra=0x7f0a0011;
         public static final int ambient_roving=0x7f0a0010;
-        public static final int app_name=0x7f0a0020;
-        public static final int auto_connect=0x7f0a0036;
+        /**   
+         */
+        public static final int app_name=0x7f0a0028;
+        public static final int auto_connect=0x7f0a003e;
         public static final int blood_pressure=0x7f0a000c;
         public static final int bluetooth_sensor_key=0x7f0a0001;
-        public static final int dummy_empty=0x7f0a0037;
+        public static final int crash_dialog_comment_prompt=0x7f0a0026;
+        public static final int crash_dialog_ok_toast=0x7f0a0027;
+        public static final int crash_dialog_text=0x7f0a0025;
+        public static final int crash_dialog_title=0x7f0a0024;
+        public static final int crash_notif_text=0x7f0a0023;
+        public static final int crash_notif_ticker_text=0x7f0a0021;
+        public static final int crash_notif_title=0x7f0a0022;
+        /**  ACRA 
+         */
+        public static final int crash_toast_text=0x7f0a0020;
+        public static final int dummy_empty=0x7f0a003f;
         public static final int ecg=0x7f0a000a;
         /**  internal sensor type 
          */
@@ -238,52 +250,52 @@ public final class R {
          */
         public static final int key_polar=0x7f0a0013;
         public static final int key_zephyrHxM=0x7f0a0014;
-        public static final int manual_connect=0x7f0a0035;
-        public static final int men_manage_db=0x7f0a003a;
-        public static final int men_manage_xml=0x7f0a003b;
-        public static final int men_preferences=0x7f0a003e;
-        public static final int men_show_eventgen=0x7f0a003d;
-        public static final int men_transformation_manager=0x7f0a003c;
-        public static final int p_age=0x7f0a0044;
-        public static final int p_cri_hr=0x7f0a0042;
-        public static final int p_cri_hr_type=0x7f0a004a;
-        public static final int p_emcy_phone_nr=0x7f0a0045;
-        public static final int p_empty=0x7f0a0048;
-        public static final int p_gender=0x7f0a0043;
-        public static final int p_height=0x7f0a0046;
-        public static final int p_height_type=0x7f0a0047;
-        public static final int p_user_name=0x7f0a0040;
-        public static final int p_weight=0x7f0a0041;
-        public static final int p_weight_type=0x7f0a0049;
+        public static final int manual_connect=0x7f0a003d;
+        public static final int men_manage_db=0x7f0a0042;
+        public static final int men_manage_xml=0x7f0a0043;
+        public static final int men_preferences=0x7f0a0046;
+        public static final int men_show_eventgen=0x7f0a0045;
+        public static final int men_transformation_manager=0x7f0a0044;
+        public static final int p_age=0x7f0a004c;
+        public static final int p_cri_hr=0x7f0a004a;
+        public static final int p_cri_hr_type=0x7f0a0052;
+        public static final int p_emcy_phone_nr=0x7f0a004d;
+        public static final int p_empty=0x7f0a0050;
+        public static final int p_gender=0x7f0a004b;
+        public static final int p_height=0x7f0a004e;
+        public static final int p_height_type=0x7f0a004f;
+        public static final int p_user_name=0x7f0a0048;
+        public static final int p_weight=0x7f0a0049;
+        public static final int p_weight_type=0x7f0a0051;
         /**  Popup screen 
          */
-        public static final int popup_sys_monitor=0x7f0a004c;
-        public static final int popup_sys_traffic_clearing=0x7f0a004d;
+        public static final int popup_sys_monitor=0x7f0a0054;
+        public static final int popup_sys_traffic_clearing=0x7f0a0055;
         /**  Personal Profile 
          */
-        public static final int psnal_input=0x7f0a003f;
+        public static final int psnal_input=0x7f0a0047;
         /**      sensor type 
          */
         public static final int pulse=0x7f0a0009;
-        public static final int request_connect=0x7f0a0034;
+        public static final int request_connect=0x7f0a003c;
         public static final int scale=0x7f0a000b;
-        public static final int select_device=0x7f0a002a;
+        public static final int select_device=0x7f0a0032;
         /**  Server URL can be changed if needed! 
          */
-        public static final int send_url=0x7f0a004b;
-        public static final int sensor_auto_connect=0x7f0a0028;
-        public static final int sensor_name_acc_chest=0x7f0a0031;
-        public static final int sensor_name_acc_debug=0x7f0a0033;
-        public static final int sensor_name_acc_leg=0x7f0a0030;
-        public static final int sensor_name_acc_wrist=0x7f0a0032;
-        public static final int sensor_name_boso_bloodpressure=0x7f0a002f;
-        public static final int sensor_name_corscience_ecg=0x7f0a002d;
-        public static final int sensor_name_iem_scale=0x7f0a002e;
-        public static final int sensor_name_infrawot=0x7f0a0039;
-        public static final int sensor_name_polarbleutooth=0x7f0a002c;
-        public static final int sensor_name_roving=0x7f0a0038;
-        public static final int sensor_name_zephyrhxm=0x7f0a002b;
-        public static final int sensor_type=0x7f0a0027;
+        public static final int send_url=0x7f0a0053;
+        public static final int sensor_auto_connect=0x7f0a0030;
+        public static final int sensor_name_acc_chest=0x7f0a0039;
+        public static final int sensor_name_acc_debug=0x7f0a003b;
+        public static final int sensor_name_acc_leg=0x7f0a0038;
+        public static final int sensor_name_acc_wrist=0x7f0a003a;
+        public static final int sensor_name_boso_bloodpressure=0x7f0a0037;
+        public static final int sensor_name_corscience_ecg=0x7f0a0035;
+        public static final int sensor_name_iem_scale=0x7f0a0036;
+        public static final int sensor_name_infrawot=0x7f0a0041;
+        public static final int sensor_name_polarbleutooth=0x7f0a0034;
+        public static final int sensor_name_roving=0x7f0a0040;
+        public static final int sensor_name_zephyrhxm=0x7f0a0033;
+        public static final int sensor_type=0x7f0a002f;
         public static final int settings_bluetooth_sensor_list=0x7f0a0006;
         public static final int settings_sensor_bluetooth_discoverable_key=0x7f0a0003;
         public static final int settings_sensor_bluetooth_pairing_key=0x7f0a0002;
@@ -292,22 +304,22 @@ public final class R {
         public static final int settings_sensor_start_listening=0x7f0a0005;
         public static final int settings_sensor_status=0x7f0a0007;
         public static final int settings_traffic_clearing=0x7f0a0008;
-        public static final int sum_bluetooth_pairing=0x7f0a0053;
-        public static final int sum_bluetooth_sensor_list=0x7f0a0056;
-        public static final int sum_traffic_clearing=0x7f0a004f;
-        public static final int title_bluetooth_pairing=0x7f0a0052;
-        public static final int title_bluetooth_sensor_list=0x7f0a0055;
-        public static final int title_bluetooth_sensor_type=0x7f0a0051;
-        public static final int title_section_event_generator=0x7f0a0023;
-        public static final int title_section_internal_sensor=0x7f0a0026;
-        public static final int title_section_sensor_config=0x7f0a0025;
-        public static final int title_section_status=0x7f0a0022;
-        public static final int title_section_traffic_generator=0x7f0a0024;
-        public static final int title_sensor_status=0x7f0a0054;
-        public static final int title_traffic_clearing=0x7f0a004e;
+        public static final int sum_bluetooth_pairing=0x7f0a005b;
+        public static final int sum_bluetooth_sensor_list=0x7f0a005e;
+        public static final int sum_traffic_clearing=0x7f0a0057;
+        public static final int title_bluetooth_pairing=0x7f0a005a;
+        public static final int title_bluetooth_sensor_list=0x7f0a005d;
+        public static final int title_bluetooth_sensor_type=0x7f0a0059;
+        public static final int title_section_event_generator=0x7f0a002b;
+        public static final int title_section_internal_sensor=0x7f0a002e;
+        public static final int title_section_sensor_config=0x7f0a002d;
+        public static final int title_section_status=0x7f0a002a;
+        public static final int title_section_traffic_generator=0x7f0a002c;
+        public static final int title_sensor_status=0x7f0a005c;
+        public static final int title_traffic_clearing=0x7f0a0056;
         /**      Sensor Settings 
          */
-        public static final int value_unknown=0x7f0a0050;
+        public static final int value_unknown=0x7f0a0058;
     }
     public static final class style {
         /** 

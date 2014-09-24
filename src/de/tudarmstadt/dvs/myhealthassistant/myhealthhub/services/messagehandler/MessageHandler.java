@@ -25,8 +25,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -44,6 +49,7 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.localmanagement.E
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.localmanagement.EventTransformationResponse;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.Advertisement;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.Announcement;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.JSONDataExchange;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.ManagementEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.StartProducer;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.StopProducer;
@@ -52,6 +58,8 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.Unadve
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.Unsubscription;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.notifications.NotificationEvent;
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.sensorreadings.SensorReadingEvent;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDB;
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.LocalTransformationDBMS;
 
 public class MessageHandler extends Service {
 
@@ -215,7 +223,112 @@ public class MessageHandler extends Service {
         	
         	//Checks the ManamgentEvent and notifies the sender about the invalid argument
         	if(!isManagementEventValid(evt))return;
-        	        	
+        	
+        	// JSONDataExchange
+        	if (evt.getEventType().equals(ManagementEvent.JSON_DATA_EXCHANGE)){
+        		Log.d(TAG, "JSON Data Exchange event from: "+ evt.getProducerID());
+
+        		String eventProducerID = evt.getProducerID();
+        		String eventProducersPackageName = ((JSONDataExchange)evt).getPackageName();
+        		String dataExchangeEventType = ((JSONDataExchange)evt).getDataExchangeEventType();
+//        		ProducerDetails producerDetails = new ProducerDetails(eventProducerID, eventProducersPackageName);
+        		String jsonDataString = ((JSONDataExchange)evt).getJSONEncodedData();
+        		
+        		try {
+					JSONObject jsonData = new JSONObject(jsonDataString);
+					String json_request = jsonData.optString(JSONDataExchange.JSON_REQUEST, "null");
+					JSONArray jObjArray = jsonData.optJSONArray(JSONDataExchange.JSON_CONTENT_ARRAY);
+					
+					if (json_request.equalsIgnoreCase(JSONDataExchange.JSON_STORE) && jObjArray != null){
+						// save contents to db
+						ArrayList<ContentValues> vArray = new ArrayList<ContentValues>();
+						for (int i = 0; i < jObjArray.length(); i++){
+							JSONObject jObj = jObjArray.optJSONObject(i);
+							if (jObj != null){
+								
+								String contents = jObj.toString();
+								String contentDate = jObj.optString(JSONDataExchange.JSON_DATE, "null");
+								String contentExtra = jObj.optString(JSONDataExchange.JSON_EXTRA, "null");
+								
+								ContentValues value = new ContentValues();
+								value.put(LocalTransformationDB.COUMN_JSON_DATE, contentDate);
+								value.put(LocalTransformationDB.COUMN_JSON_CONTENT, contents);
+								value.put(LocalTransformationDB.COUMN_JSON_EXTRA, contentExtra);
+								
+								vArray.add(value);
+							}
+						}
+						LocalTransformationDBMS transformationDB = new LocalTransformationDBMS(context);
+						transformationDB.open();
+						transformationDB.storeJsonData(vArray);
+						transformationDB.close();
+						
+					} else if (json_request.equalsIgnoreCase(JSONDataExchange.JSON_GET)){
+						// send to eventProducer all data from db
+						LocalTransformationDBMS transformationDB = new LocalTransformationDBMS(context);
+						transformationDB.open();
+						JSONArray getJArray = transformationDB.getAlljsonData();
+						transformationDB.close();
+						JSONObject jEncodedData = new JSONObject();
+						jEncodedData.putOpt(JSONDataExchange.JSON_REQUEST, JSONDataExchange.JSON_GET);
+						jEncodedData.putOpt(JSONDataExchange.JSON_CONTENT_ARRAY, getJArray);
+						
+						if (evtUtils != null){
+							JSONDataExchange eData = new JSONDataExchange(
+									evtUtils.getEventID(), evtUtils.getTimestamp(), TAG, eventProducersPackageName, dataExchangeEventType, jEncodedData.toString());
+							sendToManagementChannel(eData, eventProducersPackageName);
+							Log.e(TAG, "send EncodedData to " + eventProducersPackageName + "; ID:" + eventProducerID );
+							
+						} else {
+							Log.e(TAG, "cant send back jsonEncodedData to " + eventProducersPackageName + "; ID:" + eventProducerID );
+						}
+					} else if (json_request.equalsIgnoreCase(JSONDataExchange.JSON_EDIT) && jObjArray != null){
+						// edit contents in db
+						ArrayList<ContentValues> vArray = new ArrayList<ContentValues>();
+						int id = -1;
+						for (int i = 0; i < jObjArray.length(); i++){
+							JSONObject jObj = jObjArray.optJSONObject(i);
+							if (jObj != null){
+								
+								id = jObj.optInt(JSONDataExchange.JSON_CONTENT_ID, -1);
+								String contents = jObj.toString();
+								String contentDate = jObj.optString(JSONDataExchange.JSON_DATE, "null");
+								String contentExtra = jObj.optString(JSONDataExchange.JSON_EXTRA, "null");
+								
+								ContentValues value = new ContentValues();
+								value.put(LocalTransformationDB.COUMN_JSON_DATE, contentDate);
+								value.put(LocalTransformationDB.COUMN_JSON_CONTENT, contents);
+								value.put(LocalTransformationDB.COUMN_JSON_EXTRA, contentExtra);
+								
+								vArray.add(value);
+							}
+						}
+						LocalTransformationDBMS transformationDB = new LocalTransformationDBMS(context);
+						transformationDB.open();
+						transformationDB.editJsonData(id, vArray.get(0)); // assume that only one jObj passed in
+						transformationDB.close();
+						
+					}  else if (json_request.equalsIgnoreCase(JSONDataExchange.JSON_DEL) && jObjArray != null){
+						// delete contents in db
+						int id = -1;
+						for (int i = 0; i < jObjArray.length(); i++){
+							JSONObject jObj = jObjArray.optJSONObject(i);
+							if (jObj != null){
+								id = jObj.optInt(JSONDataExchange.JSON_CONTENT_ID, -1);
+							}
+						}
+						Log.e(TAG, "delet json:" + id);
+						LocalTransformationDBMS transformationDB = new LocalTransformationDBMS(context);
+						transformationDB.open();
+						transformationDB.deleteJsonData(id);
+						transformationDB.close();
+												
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+        	}
+        	
         	//Advertisement
         	if(evt.getEventType().equals(ManagementEvent.ADVERTISEMENT)) {
         		if(D)Log.d(TAG, "Advertisement event from "+evt.getProducerID());
@@ -570,6 +683,18 @@ public class MessageHandler extends Service {
     	//discard invalid EventTypes
     	if(evt.getEventType()== null)return false;
     	
+
+    	//Advertisement
+    	if(evt.getEventType().equals(ManagementEvent.JSON_DATA_EXCHANGE)){
+    		packageName = ((JSONDataExchange)evt).getPackageName();
+    		transmittedEventType = ((JSONDataExchange)evt).getDataExchangeEventType();
+    		
+    		String json = ((JSONDataExchange)evt).getJSONEncodedData();
+    		if(json==null){
+    			sendAnnouncement(Announcement.INVALID_EVENT_TYPE_ARGUMENTS, transmittedEventType, packageName);
+    			return false;
+    		}
+    	}
     	//Advertisement
     	if(evt.getEventType().equals(ManagementEvent.ADVERTISEMENT)){
     		packageName = ((Advertisement)evt).getPackageName();

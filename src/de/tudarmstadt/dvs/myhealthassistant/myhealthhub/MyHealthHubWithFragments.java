@@ -86,20 +86,20 @@ public class MyHealthHubWithFragments extends FragmentActivity implements
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
-		// set up listener for internal sensor:
-		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		if (!pref.getBoolean("firstBoot", false)){
-			pref.edit().putBoolean(getResources().getString(R.string.in_acc), true).commit();
-			pref.edit().putBoolean(getResources().getString(R.string.in_lig), true).commit();
-			
-			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
-			getApplicationContext().startService(intent);
-			pref.edit().putBoolean("firstBoot", true).commit();
-
-		}
+		// set default onActive for internal sensor:
+//		SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//		if (!pref.getBoolean("firstBoot", false)){
+//			pref.edit().putBoolean(getResources().getString(R.string.in_acc), true).commit();
+//			pref.edit().putBoolean(getResources().getString(R.string.in_lig), true).commit();
+//			
+//			Intent intent = new Intent("de.tudarmstadt.dvs.myhealthassistant.myhealthhub.START_ISS");
+//			getApplicationContext().startService(intent);
+//			pref.edit().putBoolean("firstBoot", true).commit();
+//
+//		}
 		
-		WakeupAlarm wAlarm = new WakeupAlarm();
-		wAlarm.setAlarm(getApplicationContext());
+//		WakeupAlarm wAlarm = new WakeupAlarm();
+//		wAlarm.setAlarm(getApplicationContext());
 			
 	}
 

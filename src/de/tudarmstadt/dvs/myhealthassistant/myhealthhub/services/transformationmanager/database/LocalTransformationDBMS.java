@@ -26,6 +26,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.events.management.JSONDataExchange;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -146,8 +151,9 @@ public class LocalTransformationDBMS {
 		values.put(LocalTransformationDB.COLUMN_Y_AXIS, yValue);
 		long insertId = database.insert(
 				LocalTransformationDB.TABLE_TRAFFIC_MON, null, values);
-		if (insertId == -1){
-			Log.e(TAG, "addTraffic failed at:[" + date + "; type:" + trafficType + "; " + xValue + "; " + yValue + "]");
+		if (insertId == -1) {
+			Log.e(TAG, "addTraffic failed at:[" + date + "; type:"
+					+ trafficType + "; " + xValue + "; " + yValue + "]");
 		}
 		return insertId != -1;
 	}
@@ -159,7 +165,7 @@ public class LocalTransformationDBMS {
 		values.put(LocalTransformationDB.COLUMN_DATE_TEXT, date);
 		long insertId = database.insert(
 				LocalTransformationDB.TABLE_DATE_TO_TRAFFIC, null, values);
-		if (insertId == -1){
+		if (insertId == -1) {
 			Log.e(TAG, "addTraffic failed at:[" + date + "]");
 		}
 		return insertId != -1;
@@ -192,19 +198,20 @@ public class LocalTransformationDBMS {
 		cursor.close();
 		return list;
 	}
-	
-	public ArrayList<String> getAllAvalDate(){
+
+	public ArrayList<String> getAllAvalDate() {
 		ArrayList<String> list = new ArrayList<String>();
 		String q = "SELECT * FROM "
-				+ LocalTransformationDB.TABLE_DATE_TO_TRAFFIC
-				+ " ORDER BY " + LocalTransformationDB.COLUMN_DATE_ID + ";";
+				+ LocalTransformationDB.TABLE_DATE_TO_TRAFFIC + " ORDER BY "
+				+ LocalTransformationDB.COLUMN_DATE_ID + ";";
 		Cursor cursor = database.rawQuery(q, null);
 		if (cursor.moveToFirst()) {
 			do {
-				String date = cursor.getString(cursor
+				String date = cursor
+						.getString(cursor
 								.getColumnIndex(LocalTransformationDB.COLUMN_DATE_TEXT));
 				if (!list.contains(date))
-						list.add(date);
+					list.add(date);
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
@@ -226,21 +233,76 @@ public class LocalTransformationDBMS {
 				return compareResult;
 			}
 		});
-		
-		for (String s : list){
+
+		for (String s : list) {
 			Log.e(TAG, "AvalDate:" + s);
 		}
 		return list;
 	}
-	
-	public void deleteAllTrafficRecords() {
-		// drop and recreate table
-		database.execSQL("DROP TABLE IF EXISTS " + LocalTransformationDB.TABLE_TRAFFIC_MON);
-		database.execSQL(LocalTransformationDB.TRAFFIC_MON_CREATE);
-		database.execSQL("DROP TABLE IF EXISTS " + LocalTransformationDB.TABLE_DATE_TO_TRAFFIC);
-		database.execSQL(LocalTransformationDB.DATE_TO_TRAFFIC);
+
+	public void storeJsonData(ArrayList<ContentValues> vArray) {
+		for (ContentValues values : vArray) {
+			long insertId = database.insert(
+					LocalTransformationDB.TABLE_JSON_DATA_EXCHANGE, null,
+					values);
+			if (insertId == -1) {
+				Log.e(TAG, "addJsonData failed at:[" + values.toString() + "]");
+			}
+		}
+	}
+
+	public void editJsonData(int id, ContentValues content) {
+		int nrRows = database.update(LocalTransformationDB.TABLE_JSON_DATA_EXCHANGE,
+				content, LocalTransformationDB.COLUMN_JSON_ID + "=?",
+				new String[] { String.valueOf(id) });
+		
+		Log.e(TAG, "editJsonData, nrOfRowsEffect=" + nrRows);
 	}
 	
+	public void deleteJsonData(int id) {
+		int nrRows = database.delete(LocalTransformationDB.TABLE_JSON_DATA_EXCHANGE,
+				LocalTransformationDB.COLUMN_JSON_ID + "=?",
+				new String[] { String.valueOf(id) });
+		
+		Log.e(TAG, "deleteJsonData, nrOfRowsEffect=" + nrRows);
+	}
+
+	public JSONArray getAlljsonData() {
+		JSONArray jArray = new JSONArray();
+		String q = "SELECT * FROM "
+				+ LocalTransformationDB.TABLE_JSON_DATA_EXCHANGE + " ORDER BY "
+				+ LocalTransformationDB.COLUMN_JSON_ID + ";";
+		Cursor cursor = database.rawQuery(q, null);
+		if (cursor.moveToFirst()) {
+			do {
+				String contents = cursor
+						.getString(cursor
+								.getColumnIndex(LocalTransformationDB.COUMN_JSON_CONTENT));
+				int id = cursor.getInt(cursor
+						.getColumnIndex(LocalTransformationDB.COLUMN_JSON_ID));
+				try {
+					JSONObject jObj = new JSONObject(contents);
+					jObj.put(JSONDataExchange.JSON_CONTENT_ID, id);
+					jArray.put(jObj);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			} while (cursor.moveToNext());
+		}
+		cursor.close();
+		return jArray;
+	}
+
+	public void deleteAllTrafficRecords() {
+		// drop and recreate table
+		database.execSQL("DROP TABLE IF EXISTS "
+				+ LocalTransformationDB.TABLE_TRAFFIC_MON);
+		database.execSQL(LocalTransformationDB.TRAFFIC_MON_CREATE);
+		database.execSQL("DROP TABLE IF EXISTS "
+				+ LocalTransformationDB.TABLE_DATE_TO_TRAFFIC);
+		database.execSQL(LocalTransformationDB.DATE_TO_TRAFFIC);
+	}
+
 	public int deleteAllTrafficFromDate(String date) {
 		database.delete(LocalTransformationDB.TABLE_DATE_TO_TRAFFIC,
 				LocalTransformationDB.COLUMN_DATE_TEXT + " like '" + date

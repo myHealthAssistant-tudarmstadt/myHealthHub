@@ -45,6 +45,21 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 	public static final String COLUMN_TRAFFIC_ID = "trafficId";
 	public static final String COLUMN_TYPE = "trafficType";
 	
+	public static final String TABLE_JSON_DATA_EXCHANGE = "local_data_exchange";
+	public static final String COLUMN_JSON_ID = "json_id";
+	public static final String COUMN_JSON_DATE = "json_date";
+	public static final String COUMN_JSON_CONTENT = "json_content";
+	public static final String COUMN_JSON_EXTRA = "json_extra";
+	public static final String COUMN_JSON_IMAGE = "json_image";
+
+	private static final String JSON_DATA_EXCHANGE = "CREATE TABLE "
+			+ TABLE_JSON_DATA_EXCHANGE + " (" + 
+			COLUMN_JSON_ID     +  " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+			COUMN_JSON_DATE    +  " TEXT, " +
+			COUMN_JSON_CONTENT +  " TEXT, " +
+			COUMN_JSON_EXTRA   +  " TEXT, " +
+			COUMN_JSON_IMAGE   +  " BLOB);";
+	
 	public static final String DATABASE_NAME = "transformations.db";
 	public static final int DATABASE_VERSION = 1;
 	
@@ -74,6 +89,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 			COLUMN_TRAFFIC_ID+ " INTEGER, " +
 			COLUMN_DATE_TEXT+ " TEXT);";
 	
+	
 	public LocalTransformationDB(Context context) {
 		super(context, DATABASE_NAME,null, DATABASE_VERSION);
 	}
@@ -84,6 +100,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 		database.execSQL(DATABASE_CREATE);
 		database.execSQL(TRAFFIC_MON_CREATE);
 		database.execSQL(DATE_TO_TRAFFIC);
+		database.execSQL(JSON_DATA_EXCHANGE);
 	}
 
 	@Override
@@ -92,6 +109,7 @@ public class LocalTransformationDB extends SQLiteOpenHelper {
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCAL_TRANSFORMATIONS);
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAFFIC_MON);
 		database.execSQL("DROP TABLE IF EXISTS " + DATE_TO_TRAFFIC);
+		database.execSQL("DROP TABLE IF EXISTS " + JSON_DATA_EXCHANGE);
 		onCreate(database);
 	}
 

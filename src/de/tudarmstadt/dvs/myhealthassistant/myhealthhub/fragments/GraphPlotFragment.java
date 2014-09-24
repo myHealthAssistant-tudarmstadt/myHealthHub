@@ -49,8 +49,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -90,19 +88,9 @@ public class GraphPlotFragment extends Fragment {
 		data_line = new ArrayList<GraphViewData>();
 		data_bar = new ArrayList<GraphViewData>();
 
-		CheckBox cBox = (CheckBox) rootView.findViewById(R.id.start_record);
-		cBox.setVisibility(View.GONE);
-
-		cBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				// startRecording(isChecked);
-				Log.e(TAG, "Recording sensors Evt = " + isChecked);
-			}
-		});
-
+		CheckBox box = (CheckBox) rootView.findViewById(R.id.start_record);
+		box.setVisibility(View.GONE);
+		
 		Button refrBtn = (Button) rootView.findViewById(R.id.refresh_btn);
 		refrBtn.setVisibility(View.GONE);
 		refrBtn.setOnClickListener(new OnClickListener() {

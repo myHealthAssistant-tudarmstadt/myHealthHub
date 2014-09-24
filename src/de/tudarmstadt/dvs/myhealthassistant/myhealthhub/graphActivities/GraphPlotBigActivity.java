@@ -1,10 +1,8 @@
 package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.graphActivities;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import com.jjoe64.graphview.BarGraphView;
@@ -19,19 +17,14 @@ import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationm
 import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.services.transformationmanager.database.TrafficData;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.hardware.Sensor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class GraphPlotBigActivity extends Activity {
 
@@ -58,19 +51,9 @@ public class GraphPlotBigActivity extends Activity {
 		data_line = new ArrayList<GraphViewData>();
 		data_bar = new ArrayList<GraphViewData>();
 
-		CheckBox cBox = (CheckBox) findViewById(R.id.start_record);
-		cBox.setVisibility(View.GONE);
-
-		cBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				// startRecording(isChecked);
-				Log.e(TAG, "Recording sensors Evt = " + isChecked);
-			}
-		});
-
+		CheckBox box = (CheckBox) findViewById(R.id.start_record);
+		box.setVisibility(View.GONE);
+		
 		Button refrBtn = (Button) findViewById(R.id.refresh_btn);
 		refrBtn.setVisibility(View.GONE);
 		refrBtn.setOnClickListener(new OnClickListener() {
@@ -161,7 +144,6 @@ public class GraphPlotBigActivity extends Activity {
 			newDate = getDate(1, atDate.getText().toString());
 		}
 
-		Log.e(TAG, "newDate: " + newDate); // FIXME
 		data_line = updateTrafficOnDate(newDate, firstGrpType);
 		data_bar = updateTrafficOnDate(newDate, secondGrpType);
 		redrawCharts();

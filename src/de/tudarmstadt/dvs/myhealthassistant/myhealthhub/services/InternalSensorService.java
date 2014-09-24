@@ -344,45 +344,45 @@ public class InternalSensorService extends Service implements
 	private int lightDataCounter;
 
 	private void gotLightEvent(String dateOfMeasurement, int typeId, float value) {
-		if (lastAddedLightData == null || lastAddedLightData.isEmpty()) {
-			lastAddedLightData = dateOfMeasurement;
-			listLightData = new ArrayList<Coordinate>();
-			readingLightValue = 0.0d;
-			lightDataCounter = 1;
-		} else {
-			if (timeDiff(lastAddedLightData, dateOfMeasurement, timespan)) {
-				// after each min the added up data being divided by
-				// average and stored
-				double yValue = readingLightValue / lightDataCounter;
-				String xValue = dateOfMeasurement;
-
-				if (listLightData == null)
-					listLightData = new ArrayList<Coordinate>();
-				
-				listLightData.add(new Coordinate(xValue, yValue));
-
-				// store to dbs each 10 min (when size of list reach xxx0)
-				if (listLightData.size() % 10 == 0) {
-					addTrafficToDB(dateOfMeasurement, typeId, listLightData); // add
-																				// only
-																				// 10
-																				// data
-																				// to
-																				// dbs
-					listLightData = new ArrayList<Coordinate>();
-				}
-				// the data being reset after that
-				readingLightValue = Double.parseDouble(Float.toString(value));
-				lightDataCounter = 1;
-
-				lastAddedLightData = dateOfMeasurement;
-			} else {
-				// within a minute value being added up only
-				readingLightValue += Double.parseDouble(Float.toString(value));
-				lightDataCounter++;
-
-			}
-		}
+//		if (lastAddedLightData == null || lastAddedLightData.isEmpty()) {
+//			lastAddedLightData = dateOfMeasurement;
+//			listLightData = new ArrayList<Coordinate>();
+//			readingLightValue = 0.0d;
+//			lightDataCounter = 1;
+//		} else {
+//			if (timeDiff(lastAddedLightData, dateOfMeasurement, timespan)) {
+//				// after each min the added up data being divided by
+//				// average and stored
+//				double yValue = readingLightValue / lightDataCounter;
+//				String xValue = dateOfMeasurement;
+//
+//				if (listLightData == null)
+//					listLightData = new ArrayList<Coordinate>();
+//				
+//				listLightData.add(new Coordinate(xValue, yValue));
+//
+//				// store to dbs each 10 min (when size of list reach xxx0)
+//				if (listLightData.size() % 10 == 0) {
+//					addTrafficToDB(dateOfMeasurement, typeId, listLightData); // add
+//																				// only
+//																				// 10
+//																				// data
+//																				// to
+//																				// dbs
+//					listLightData = new ArrayList<Coordinate>();
+//				}
+//				// the data being reset after that
+//				readingLightValue = Double.parseDouble(Float.toString(value));
+//				lightDataCounter = 1;
+//
+//				lastAddedLightData = dateOfMeasurement;
+//			} else {
+//				// within a minute value being added up only
+//				readingLightValue += Double.parseDouble(Float.toString(value));
+//				lightDataCounter++;
+//
+//			}
+//		}
 	}
 
 	private static String lastAddedAccData = "";
@@ -391,50 +391,50 @@ public class InternalSensorService extends Service implements
 
 	private void gotAccEvent(String dateOfMeasurement, int typeId, int x,
 			int y, int z) {
-		if (lastAddedAccData == null || lastAddedAccData.isEmpty()) {
-			lastAddedAccData = dateOfMeasurement;
-			listAccData = new ArrayList<Coordinate>();
-			accValues = new ArrayList<Double>();
-		} else {
-			if (timeDiff(lastAddedAccData, dateOfMeasurement, timespan)) {
-
-				String xValue = dateOfMeasurement;
-				double mean = 0.0d;
-				double variance = 0.0d;
-				int n = accValues.size();
-				for (double b : accValues) {
-					mean += b;
-				}
-				mean = mean / n;
-				for (double b : accValues) {
-					variance += (mean - b) * (mean - b);
-				}
-				variance = variance / n;
-
-				double yValue = variance;
-				// double yValue = Math.sqrt(variance); // standard Deviation
-				
-				if (listAccData == null)
-					listAccData = new ArrayList<Coordinate>();
-				
-				listAccData.add(new Coordinate(xValue, yValue));
-				
-				// store to dbs each 10 min (when size of list reach 10)
-				if (listAccData.size() % 10 == 0) { //
-					addTrafficToDB(dateOfMeasurement, typeId, listAccData);
-					listAccData = new ArrayList<Coordinate>();
-				}
-
-				// the data being reset after each min
-				accValues = new ArrayList<Double>();
-
-				lastAddedAccData = dateOfMeasurement;
-			} else {
-				// within a minute value being added up only
-				// readingAccValue += Math.sqrt(x * x + y * y + z * z);
-				accValues.add(Math.sqrt(x * x + y * y + z * z));
-			}
-		}
+//		if (lastAddedAccData == null || lastAddedAccData.isEmpty()) {
+//			lastAddedAccData = dateOfMeasurement;
+//			listAccData = new ArrayList<Coordinate>();
+//			accValues = new ArrayList<Double>();
+//		} else {
+//			if (timeDiff(lastAddedAccData, dateOfMeasurement, timespan)) {
+//
+//				String xValue = dateOfMeasurement;
+//				double mean = 0.0d;
+//				double variance = 0.0d;
+//				int n = accValues.size();
+//				for (double b : accValues) {
+//					mean += b;
+//				}
+//				mean = mean / n;
+//				for (double b : accValues) {
+//					variance += (mean - b) * (mean - b);
+//				}
+//				variance = variance / n;
+//
+//				double yValue = variance;
+//				// double yValue = Math.sqrt(variance); // standard Deviation
+//				
+//				if (listAccData == null)
+//					listAccData = new ArrayList<Coordinate>();
+//				
+//				listAccData.add(new Coordinate(xValue, yValue));
+//				
+//				// store to dbs each 10 min (when size of list reach 10)
+//				if (listAccData.size() % 10 == 0) { //
+//					addTrafficToDB(dateOfMeasurement, typeId, listAccData);
+//					listAccData = new ArrayList<Coordinate>();
+//				}
+//
+//				// the data being reset after each min
+//				accValues = new ArrayList<Double>();
+//
+//				lastAddedAccData = dateOfMeasurement;
+//			} else {
+//				// within a minute value being added up only
+//				// readingAccValue += Math.sqrt(x * x + y * y + z * z);
+//				accValues.add(Math.sqrt(x * x + y * y + z * z));
+//			}
+//		}
 	}
 
 	/**
@@ -466,54 +466,6 @@ public class InternalSensorService extends Service implements
 	}
 
 	private LocalTransformationDBMS transformationDB;
-
-	// private String currentDate = "";
-	// public void addTrafficToDB(String timeOfMeasurement, String type,
-	// ArrayList<Coordinate> listData) {
-	// String date = "";
-	// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk:mm:ss");
-	//
-	// try {
-	// Date today = sdf.parse(timeOfMeasurement);
-	// sdf.applyPattern("dd-MM-yyyy");
-	//
-	// date = sdf.format(today);
-	//
-	// } catch (ParseException e) {
-	// e.printStackTrace();
-	// Log.e(TAG, e.toString());
-	// }
-	//
-	// Log.e(TAG, timeOfMeasurement + "-date=" + date + " type:" + type);
-	// transformationDB = new
-	// LocalTransformationDBMS(this.getApplicationContext());
-	// transformationDB.open();
-	// // add to traffic table
-	// for (int i = 0; i < listData.size(); i++) {
-	// Coordinate d = listData.get(i);
-	// transformationDB.addTraffic(date, type, d.getX(), d.getY());
-	// }
-	// // add to date table
-	// if (currentDate.isEmpty()){
-	// currentDate = timeOfMeasurement;
-	// transformationDB.addDateOfTraffic(date, 0);
-	// } else {
-	// if (timeDiff(currentDate, timeOfMeasurement, DateUtils.DAY_IN_MILLIS)){
-	// // if currentDate is differ by one day, format and add it to date table
-	// try {
-	// Date today = sdf.parse(currentDate);
-	// sdf.applyPattern("dd-MM-yyyy");
-	// String newDate = sdf.format(today);
-	// transformationDB.addDateOfTraffic(newDate, 0);
-	// } catch (ParseException e) {
-	// e.printStackTrace();
-	// Log.e(TAG, e.toString());
-	// }
-	// currentDate = timeOfMeasurement;
-	// }
-	// }
-	// transformationDB.close();
-	// }
 
 	private void addTrafficToDB(String timeOfMeasurement, int typeID,
 			ArrayList<Coordinate> listData) {

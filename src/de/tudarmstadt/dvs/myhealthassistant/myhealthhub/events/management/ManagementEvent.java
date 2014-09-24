@@ -42,6 +42,7 @@ public abstract class ManagementEvent extends Event {
 	
 	public final static String ANNOUNCEMENT = MANAGEMENT+".Announcement";
 		
+	public final static String JSON_DATA_EXCHANGE = MANAGEMENT + ".JSONDataExchange";
 	
 		/**
 	 * @return the management

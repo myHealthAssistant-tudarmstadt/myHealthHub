@@ -18,8 +18,25 @@
  
  package de.tudarmstadt.dvs.myhealthassistant.myhealthhub.adapter;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
+import de.tudarmstadt.dvs.myhealthassistant.myhealthhub.R;
 import android.app.Application;
 import android.content.Context;
+
+@ReportsCrashes(formKey = "", // will not be used
+				mailTo = "myHealthAssistant.tudarmstadt@googlemail.com",
+				mode = ReportingInteractionMode.DIALOG,
+                resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
+                resDialogText = R.string.crash_dialog_text,
+                resDialogIcon = android.R.drawable.ic_dialog_info, //optional. default is a warning sign
+                resDialogTitle = R.string.crash_dialog_title, // optional. default is your application name
+                //resDialogCommentPrompt = R.string.crash_dialog_comment_prompt, // optional. when defined, adds a user text field input with this text resource as a label
+                resDialogOkToast = R.string.crash_dialog_ok_toast // optional. displays a Toast message when the user accepts to send a report.
+                 
+				)
 /**
  * Used to access context to getResource outside of activities
  * (nothing special here)
@@ -33,6 +50,9 @@ public class MApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        
+		// The following line triggers the initialization of ACRA
+		ACRA.init(this);
     }
 
     public static Context getContext(){

@@ -188,7 +188,8 @@ public class FelixService extends Service implements IFelixServiceBinder {
 		super.onDestroy();
 		if(D)Log.i(TAG, "stopping the felix service");
 		try {
-			felixFramework.stop();
+			if (felixFramework != null)
+				felixFramework.stop();
 			felixFramework = null;
 		} catch (BundleException ex) {
 			Log.w(TAG, "problem occuring when stopping felix", ex);
